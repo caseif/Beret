@@ -214,7 +214,7 @@ public enum Opcode {
 	TABLESWITCH(0xAA),
 	WIDE(0xC4);
 
-	private static final Map<Byte, Opcode> codes = new HashMap<>();
+	private static Map<Byte, Opcode> codes;
 
 	private byte byteCode;
 
@@ -223,9 +223,21 @@ public enum Opcode {
 	 *
 	 * @param byteCode The byte associated with this {@link Opcode}
 	 */
-	private Opcode(byte byteCode) {
+	Opcode(byte byteCode) {
 		this.byteCode = byteCode;
-		getCodes().put(byteCode, this);
+		register(byteCode);
+	}
+
+	/**
+	 * Registers this {@link Opcode} with the given byte tag.
+	 *
+	 * @param code The byte tag to associate with this {@link Opcode}.
+	 */
+	private void register(byte code) {
+		if (codes == null) {
+			codes = new HashMap<>();
+		}
+		codes.put(code, this);
 	}
 
 	/**
@@ -244,10 +256,6 @@ public enum Opcode {
 	 */
 	public byte getByteCode() {
 		return this.byteCode;
-	}
-
-	private static Map<Byte, Opcode> getCodes() {
-		return codes;
 	}
 
 	public static Opcode fromByte(byte byteCode) {

@@ -1,5 +1,6 @@
 package net.caseif.beret.structures.field;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ public class ConstantStructure {
 
 	private final StructureType type;
 	private byte[] info;
+	private String utf8;
 
 	/**
 	 * Creates a new {@link ConstantStructure} with a type inferred from the
@@ -69,6 +71,7 @@ public class ConstantStructure {
 		else {
 			throw new IllegalArgumentException("Invalid info length");
 		}
+		utf8 = this.getType() == StructureType.UTF_8 ? new String(info, Charset.forName("UTF-8")) : null;
 	}
 
 	/**
@@ -109,13 +112,25 @@ public class ConstantStructure {
 		METHOD_TYPE(0x10, 2),
 		INVOKE_DYNAMIC(0x12, 4);
 
-		private static Map<Byte, StructureType> types = new HashMap<>();
+		private static Map<Byte, StructureType> types;
 
 		private int length;
 
 		StructureType(int tag, int length) {
-			getTypes().put((byte)tag, this);
 			this.length = length;
+			register((byte)tag);
+		}
+
+		/**
+		 * Adds this {@link StructureType} to the registry with the given tag.
+		 *
+		 * @param tag The tag to associated with this {@link StructureType}
+		 */
+		private void register(byte tag) {
+			if (types == null) {
+				types = new HashMap<>();
+			}
+			types.put(tag, this);
 		}
 
 		/**
@@ -134,14 +149,6 @@ public class ConstantStructure {
 		 */
 		public static StructureType fromTag(byte tag) {
 			return types.get(tag);
-		}
-
-		/**
-		 * Utility method. Returns a map of all registered types.
-		 * @return A map of all registered types
-		 */
-		private Map<Byte, StructureType> getTypes() {
-			return types;
 		}
 
 	}

@@ -68,7 +68,7 @@ public class ClassFile {
 	private void loadConstantPool() {
 		short poolSize = Util.bytesToShort(bytes[8], bytes[9]); // parse two bytes into a short
 		poolSize -= 1; // the pool size is defined as one larger than it actually is
-		List<Byte> poolStore = new ArrayList<>();
+		constantPool = new ConstantStructure[poolSize];
 		int offset = 10;
 		for (int i = 0; i < poolSize; i++) {
 			byte tag = bytes[offset]; // get the tag of the current structure

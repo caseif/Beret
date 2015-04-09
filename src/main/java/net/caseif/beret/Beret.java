@@ -27,6 +27,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package net.caseif.beret;
+
 /**
  * Beret Extraordinary Reverse Engineering Toolkit.
  *
