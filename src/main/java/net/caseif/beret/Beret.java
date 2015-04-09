@@ -28,6 +28,11 @@
  */
 package net.caseif.beret;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Beret Extraordinary Reverse Engineering Toolkit.
  *
@@ -37,7 +42,33 @@ package net.caseif.beret;
 public class Beret {
 
 	public static void main(String[] args) {
-		System.out.println("Beret Extraordinary Reverse Engineering Toolkit");
+		if (args.length < 2) {
+			System.out.println("Usage: Beret.jar <class file> <output file>");
+			System.exit(0);
+		}
+		File input = new File(args[0]);
+		if (!input.exists()) {
+			System.err.println("Invalid input file!");
+			System.exit(1);
+		}
+		ClassFile cf = null;
+		try {
+			cf = new ClassFile(new FileInputStream(input));
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+			System.err.println("Invalid input file!");
+			System.exit(1);
+		}
+		File output = new File(args[1]);
+		try {
+			cf.writeOut(new FileOutputStream(output));
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+			System.err.println("Failed to write to output file!");
+			System.exit(1);
+		}
 	}
 
 }

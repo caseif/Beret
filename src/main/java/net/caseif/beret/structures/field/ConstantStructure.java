@@ -10,7 +10,6 @@ public class ConstantStructure {
 
 	private final StructureType type;
 	private byte[] info;
-	private String utf8;
 
 	/**
 	 * Creates a new {@link ConstantStructure} with a type inferred from the
@@ -71,7 +70,6 @@ public class ConstantStructure {
 		else {
 			throw new IllegalArgumentException("Invalid info length");
 		}
-		utf8 = this.getType() == StructureType.UTF_8 ? new String(info, Charset.forName("UTF-8")) : null;
 	}
 
 	/**
