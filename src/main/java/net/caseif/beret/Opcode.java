@@ -240,7 +240,7 @@ public enum Opcode {
 	/**
 	 * Returns the byte associated with this {@link Opcode}.
 	 *
-	 * @since 1.0.0-SNAPSHOT
+	 * @return The <code>byte</code> representing this {@link Opcode}.
 	 */
 	public byte getByteCode() {
 		return this.byteCode;
