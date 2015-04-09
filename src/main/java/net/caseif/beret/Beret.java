@@ -26,13 +26,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
- /**
-  * Beret Extraordinary Reverse Engineering Toolkit.
-  *
-  * @author Max Roncacé
-  * @version 1.0.0-SNAPSHOT
-  */
+package net.caseif.beret;
+/**
+ * Beret Extraordinary Reverse Engineering Toolkit.
+ *
+ * @author Max Roncacé
+ * @version 1.0.0-SNAPSHOT
+ */
 public class Beret {
 
 	public static void main(String[] args) {
