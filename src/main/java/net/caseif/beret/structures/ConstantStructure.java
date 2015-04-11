@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.caseif.beret.structures.field;
+package net.caseif.beret.structures;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -138,9 +138,11 @@ public class ConstantStructure {
 
 		private static Map<Byte, StructureType> types;
 
+		private byte tag;
 		private int length;
 
 		StructureType(int tag, int length) {
+			this.tag = (byte)tag;
 			this.length = length;
 			register((byte)tag);
 		}
@@ -155,6 +157,15 @@ public class ConstantStructure {
 				types = new HashMap<>();
 			}
 			types.put(tag, this);
+		}
+
+		/**
+		 * Gets the tag internally associated with this structure type.
+		 *
+		 * @return The tag internally associated with this structure type
+		 */
+		public byte getTag() {
+			return this.tag;
 		}
 
 		/**

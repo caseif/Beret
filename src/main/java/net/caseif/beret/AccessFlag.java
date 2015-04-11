@@ -1,7 +1,7 @@
 /*
  * New BSD License (BSD-new)
  *
- * Copyright (c) 2015 Maxim RoncacÃ©
+ * Copyright (c) 2015 Maxim Roncacé
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,24 +33,45 @@ import java.util.Set;
 
 public final class AccessFlag {
 
-	private final Set<FlagType> flags;
+	private final AccessTarget target;
+	private final Set<Enum> flags;
 
 	/**
 	 * Constructs a new access flag from the given bitmask.
 	 *
+	 * @param target The item type this flag applies to
 	 * @param first The first byte of the bitmask
 	 * @param second The second byte of the bitmask
 	 */
-	public AccessFlag(byte first, byte second) {
+	public AccessFlag(AccessTarget target, byte first, byte second) {
+		this.target = target;
 		flags = new HashSet<>();
-		for (FlagType ft : FlagType.values()) {
-			if (ft.isFirst && (first & ft.mask) == ft.mask
-					|| !ft.isFirst
-					&& (second & ft.mask) == ft.mask) {
-				flags.add(ft);
+		if (target == AccessTarget.CLASS) {
+			for (ClassFlag ft : ClassFlag.values()) {
+				if (ft.isFirst && (first & ft.mask) == ft.mask
+						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
+					flags.add(ft);
+				}
+			}
+		}
+		else if (target == AccessTarget.FIELD) {
+			for (FieldFlag ft : FieldFlag.values()) {
+				if (ft.isFirst && (first & ft.mask) == ft.mask
+						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
+					flags.add(ft);
+				}
 			}
 		}
 		//TODO: verify the flag combination is valid
+	}
+
+	/**
+	 * Gets the structure type which these flags apply to.
+	 *
+	 * @return The structure type which these flags apply to
+	 */
+	public AccessTarget getTargetType() {
+		return this.target;
 	}
 
 	/**
@@ -58,14 +79,22 @@ public final class AccessFlag {
 	 *
 	 * @return All access flags set by this {@link AccessFlag}
 	 */
-	public Set<FlagType> getFlags() {
+	public Set<? extends Enum> getFlags() {
 		return this.flags;
 	}
 
 	/**
-	 * Represents a specific access flag type.
+	 * Represents a construct which may have access flags applied to it.
 	 */
-	public enum FlagType {
+	public enum AccessTarget {
+		CLASS,
+		FIELD;
+	}
+
+	/**
+	 * Represents a flag applying to a class.
+	 */
+	public enum ClassFlag {
 
 		//TODO: document
 		ACC_PUBLIC((byte)0x01, false),
@@ -80,7 +109,33 @@ public final class AccessFlag {
 		private byte mask;
 		private boolean isFirst;
 
-		FlagType(byte mask, boolean isFirst) {
+		ClassFlag (byte mask, boolean isFirst) {
+			this.mask = mask;
+			this.isFirst = isFirst;
+		}
+
+	}
+
+	/**
+	 * Represents a flag applying to a field.
+	 */
+	public enum FieldFlag {
+
+		//TODO: document
+		ACC_PUBLIC((byte)0x01, false),
+		ACC_PRIVATE((byte)0x02, false),
+		ACC_PROTECTED((byte)0x04, false),
+		ACC_STATIC((byte)0x08, false),
+		ACC_FINAL((byte)0x10, false),
+		ACC_VOLATILE((byte)0x40, false),
+		ACC_TRANSIENT((byte)0x80, false),
+		ACC_SYNTHETIC((byte)0x10, true),
+		ACC_ENUM((byte)0x40, true);
+
+		private byte mask;
+		private boolean isFirst;
+
+		FieldFlag (byte mask, boolean isFirst) {
 			this.mask = mask;
 			this.isFirst = isFirst;
 		}

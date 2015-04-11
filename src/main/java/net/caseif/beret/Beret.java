@@ -52,9 +52,9 @@ public class Beret {
 			System.exit(1);
 		}
 		System.out.println("Reading from " + input.getAbsolutePath() + "...");
-		ClassFile cf = null;
+		ClassInfo cf = null;
 		try {
-			cf = new ClassFile(new FileInputStream(input));
+			cf = new ClassInfo(new FileInputStream(input));
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.err.println("Invalid input file!");

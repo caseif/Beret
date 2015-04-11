@@ -32,12 +32,24 @@ import java.nio.charset.Charset;
 
 public class Util {
 
+	public static int bytesToInt(byte b1, byte b2, byte b3, byte b4) {
+		return b1 * 0xFFFFFF + b2 * 0xFFFF + b3 * 0xFF + b4;
+	}
+
 	public static short bytesToShort(byte b1, byte b2) {
-		return (short)(b1 * 256 + b2);
+		return (short)(b1 * 0xFF + b2);
 	}
 
 	public static int bytesToUshort(byte b1, byte b2) {
 		return asUnsignedShort(bytesToShort(b1, b2));
+	}
+
+	public static String bytesToHex(byte[] bytes) {
+		StringBuilder sb = new StringBuilder();
+		for (byte b : bytes) {
+			sb.append(String.format("%02X", b));
+		}
+		return sb.toString();
 	}
 
 	public static int asUnsignedShort(short signed) {
