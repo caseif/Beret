@@ -40,6 +40,7 @@ import java.util.List;
 public class ClassFile {
 
 	private static final int CONSTANT_POOL_START = 10; // this will never change
+	private static int INTERFACE_POOL_START;
 
 	private final byte[] bytes;
 
@@ -53,6 +54,8 @@ public class ClassFile {
 
 	private String className;
 	private String superName;
+
+	private String[] interfacePool;
 
 	/**
 	 * Loads a class file from the given {@link InputStream}.
@@ -80,6 +83,7 @@ public class ClassFile {
 		loadConstantPool();
 		loadAccessFlag();
 		loadClassInfo();
+		loadInterfaces();
 	}
 
 	/**
@@ -158,15 +162,12 @@ public class ClassFile {
 	 */
 	public void loadClassInfo() throws IOException {
 		int offset = CONSTANT_POOL_START + constantPoolLength + 2;
-		System.out.println(offset);
 		int classInfoPointer = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
-		System.out.println(bytes[offset] + " " + bytes[offset + 1]);
 		ConstantStructure classInfo = constantPool[classInfoPointer - 1];
 		if (classInfo.getType() != ConstantStructure.StructureType.CLASS) {
 			throw new IllegalStateException("Class info pointer does not point to a class info structure");
 		}
 		int classNamePointer = Util.bytesToUshort(classInfo.getInfo()[0], classInfo.getInfo()[1]);
-		System.out.println(classNamePointer);
 		ConstantStructure classNameStruct = constantPool[classNamePointer - 1];
 		if (classNameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 			throw new IllegalStateException("Class name pointer does not point to a UTF-8 structure");
@@ -185,9 +186,34 @@ public class ClassFile {
 				throw new IllegalStateException("Superclass name pointer does not point to a UTF-8 structure");
 			}
 			superName = Util.asUtf8(superNameStruct.getInfo());
-		}
-		else {
+		} else { // super pointer is 0x00, so it defaults to Object
 			superName = "java/lang/Object";
+		}
+		INTERFACE_POOL_START = CONSTANT_POOL_START + constantPoolLength + 6;
+	}
+
+	private void loadInterfaces() {
+		int offset = INTERFACE_POOL_START; // byte offset in the binary file
+		int poolLength = Util.bytesToUshort(bytes[offset], bytes[offset + 1]); // indexing starts at 1
+		interfacePool = new String[poolLength];
+		offset += 2;
+		for (int i = 0; i < poolLength; i++) {
+			int pointer = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
+			if (pointer > 0) {
+				ConstantStructure classStruct = constantPool[pointer - 1];
+				if (classStruct.getType() != ConstantStructure.StructureType.CLASS) {
+					throw new IllegalStateException("Interface pointer does not point to a class structure");
+				}
+				int utf8Pointer = Util.bytesToUshort(classStruct.getInfo()[0], classStruct.getInfo()[1]);
+				ConstantStructure interfaceName = constantPool[utf8Pointer - 1];
+				if (interfaceName.getType() != ConstantStructure.StructureType.UTF_8) {
+					throw new IllegalStateException("Class structure does not point to a UTF-8 structure");
+				}
+				interfacePool[i] = Util.asUtf8(interfaceName.getInfo());
+			} else {
+				interfacePool[i] = "";
+			}
+			offset += 2; // move to the next pointer
 		}
 	}
 
@@ -218,7 +244,6 @@ public class ClassFile {
 				for (byte b : cs.getInfo()) {
 					sb.append(String.format("%02X", b));
 				}
-				//sb.deleteCharAt(sb.length() - 1);
 			}
 			sb.append("\n");
 			++i;
@@ -227,6 +252,11 @@ public class ClassFile {
 		sb.append("Access flags:").append("\n");
 		for (AccessFlag.FlagType ft : accessFlag.getFlags()) {
 			sb.append("    ").append(ft.toString()).append("\n");
+		}
+		sb.append("\n");
+		sb.append("Interfaces:").append("\n");
+		for (String s : interfacePool) {
+			sb.append("    ").append(s).append("\n");
 		}
 
 		stream.write(sb.toString().getBytes(Charset.forName("UTF-8")));
