@@ -28,10 +28,24 @@
  */
 package net.caseif.beret;
 
+import java.nio.charset.Charset;
+
 public class Util {
 
 	public static short bytesToShort(byte b1, byte b2) {
 		return (short)(b1 * 256 + b2);
+	}
+
+	public static int bytesToUshort(byte b1, byte b2) {
+		return asUnsignedShort(bytesToShort(b1, b2));
+	}
+
+	public static int asUnsignedShort(short signed) {
+		return signed < 0 ? 0x100 + signed : signed;
+	}
+
+	public static String asUtf8(byte[] bytes) {
+		return new String(bytes, Charset.forName("UTF-8"));
 	}
 
 }

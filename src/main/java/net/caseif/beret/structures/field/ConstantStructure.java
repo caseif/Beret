@@ -45,7 +45,7 @@ public class ConstantStructure {
 	 * @param tag The byte tag denoting this structure's type
 	 * @param length The length of this {@link ConstantStructure}
 	 */
-	public ConstantStructure(byte tag, short length) {
+	public ConstantStructure(byte tag, int length) {
 		this.type = StructureType.fromTag(tag);
 		info = new byte[length];
 		if (this.type == null) {
