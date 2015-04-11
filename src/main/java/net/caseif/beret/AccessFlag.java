@@ -114,6 +114,11 @@ public final class AccessFlag {
 			this.isFirst = isFirst;
 		}
 
+		@Override
+		public String toString() {
+			return this.name().substring(4).toLowerCase();
+		}
+
 	}
 
 	/**
@@ -138,6 +143,11 @@ public final class AccessFlag {
 		FieldFlag (byte mask, boolean isFirst) {
 			this.mask = mask;
 			this.isFirst = isFirst;
+		}
+
+		@Override
+		public String toString() {
+			return this.name().substring(4).toLowerCase();
 		}
 
 	}

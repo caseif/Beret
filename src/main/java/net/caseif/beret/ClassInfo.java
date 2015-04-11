@@ -272,11 +272,12 @@ public class ClassInfo {
 		}
 
 		sb.append("\n");
-		sb.append("Access flags:").append("\n");
+		sb.append("Access flags: ");
 		assert accessFlag.getTargetType() == AccessFlag.AccessTarget.CLASS;
 		for (AccessFlag.ClassFlag ft : (Set< AccessFlag.ClassFlag>)accessFlag.getFlags()) {
-			sb.append("    ").append(ft.toString()).append("\n");
+			sb.append(ft.toString()).append(" ");
 		}
+		sb.deleteCharAt(sb.length() - 1);
 
 		sb.append("\n");
 		sb.append("Interfaces:").append("\n");
@@ -289,7 +290,6 @@ public class ClassInfo {
 		for (FieldInfo f : fields) {
 			sb.append("    ").append(f.getName()).append(":").append("\n");
 			sb.append("        ").append("Access flags: ");
-			System.out.println(f.getAccess().getFlags().size());
 			assert f.getAccess().getTargetType() == AccessFlag.AccessTarget.FIELD;
 			for (AccessFlag.FieldFlag flag : (Set<AccessFlag.FieldFlag>)f.getAccess().getFlags()) {
 				sb.append(flag.toString()).append(" ");
