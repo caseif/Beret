@@ -28,7 +28,6 @@
  */
 package net.caseif.beret.structures.field;
 
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,7 +49,7 @@ public class ConstantStructure {
 		this.type = StructureType.fromTag(tag);
 		info = new byte[length];
 		if (this.type == null) {
-			throw new IllegalArgumentException("Bad tag");
+			throw new IllegalArgumentException("Bad tag: " + tag);
 		}
 	}
 
@@ -128,7 +127,7 @@ public class ConstantStructure {
 		LONG(0x05, 8),
 		DOUBLE(0x06, 8),
 		CLASS(0x07, 2),
-		STRING(0x08, 4),
+		STRING(0x08, 2),
 		FIELD_REF(0x09, 4),
 		METHOD_REF(0x0A, 4),
 		INTERFACE_REF(0x0B, 4),

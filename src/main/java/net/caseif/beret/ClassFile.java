@@ -39,7 +39,7 @@ import java.util.List;
 
 public class ClassFile {
 
-	private final int CONSTANT_POOL_START = 10; // this will never change
+	private static final int CONSTANT_POOL_START = 10; // this will never change
 
 	private final byte[] bytes;
 
@@ -108,13 +108,26 @@ public class ClassFile {
 		for (int i = 0; i < poolSize; i++) {
 			byte tag = bytes[offset]; // get the tag of the current structure
 			++offset; // move the offset to the content start
-			ConstantStructure struct;
+			ConstantStructure struct = null;
 			if (ConstantStructure.StructureType.fromTag(tag) == ConstantStructure.StructureType.UTF_8) {
 				short length = Util.bytesToShort(bytes[offset], bytes[offset + 1]); // get defined length
 				offset += 2; // move offset past length indicator
-				struct = new ConstantStructure(tag, length);
+				try {
+					struct = new ConstantStructure(tag, length);
+				} catch (IllegalArgumentException ex) {
+					System.err.println("Exception caught at offset " + offset + ":");
+					ex.printStackTrace();
+				}
 			} else {
-				struct = new ConstantStructure(tag);
+				try {
+					struct = new ConstantStructure(tag);
+				} catch (IllegalArgumentException ex) {
+					System.err.println("Exception caught at offset " + offset + ":");
+					ex.printStackTrace();
+				}
+			}
+			if (struct == null) {
+				throw new UnsupportedOperationException("Failed to load constant pool");
 			}
 			int length = struct.getLength(); // get expected length
 			byte[] content = new byte[length]; // create empty array of expected size
@@ -130,9 +143,6 @@ public class ClassFile {
 	 * Loads the class access flag.
 	 */
 	private void loadAccessFlag() {
-		System.out.println(constantPoolLength);
-		System.out.println(bytes[CONSTANT_POOL_START + constantPoolLength]);
-		System.out.println(bytes[CONSTANT_POOL_START + constantPoolLength + 1]);
 		accessFlag = new AccessFlag(bytes[CONSTANT_POOL_START + constantPoolLength],
 				bytes[CONSTANT_POOL_START + constantPoolLength + 1]);
 	}

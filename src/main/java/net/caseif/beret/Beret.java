@@ -51,6 +51,7 @@ public class Beret {
 			System.err.println("Invalid input file!");
 			System.exit(1);
 		}
+		System.out.println("Reading from " + input.getAbsolutePath() + "...");
 		ClassFile cf = null;
 		try {
 			cf = new ClassFile(new FileInputStream(input));
@@ -61,6 +62,7 @@ public class Beret {
 		}
 		File output = new File(args[1]);
 		try {
+			System.out.println("Writing to " + output.getAbsolutePath() + "...");
 			cf.writeOut(new FileOutputStream(output));
 		} catch (IOException ex) {
 			ex.printStackTrace();
