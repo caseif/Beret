@@ -53,9 +53,15 @@ public final class AccessFlag {
 					flags.add(ft);
 				}
 			}
-		}
-		else if (target == AccessTarget.FIELD) {
+		} else if (target == AccessTarget.FIELD) {
 			for (FieldFlag ft : FieldFlag.values()) {
+				if (ft.isFirst && (first & ft.mask) == ft.mask
+						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
+					flags.add(ft);
+				}
+			}
+		} else if (target == AccessTarget.METHOD) {
+			for (MethodFlag ft : MethodFlag.values()) {
 				if (ft.isFirst && (first & ft.mask) == ft.mask
 						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
 					flags.add(ft);
@@ -88,7 +94,8 @@ public final class AccessFlag {
 	 */
 	public enum AccessTarget {
 		CLASS,
-		FIELD;
+		FIELD,
+		METHOD
 	}
 
 	/**
@@ -109,7 +116,7 @@ public final class AccessFlag {
 		private byte mask;
 		private boolean isFirst;
 
-		ClassFlag (byte mask, boolean isFirst) {
+		ClassFlag(byte mask, boolean isFirst) {
 			this.mask = mask;
 			this.isFirst = isFirst;
 		}
@@ -140,7 +147,41 @@ public final class AccessFlag {
 		private byte mask;
 		private boolean isFirst;
 
-		FieldFlag (byte mask, boolean isFirst) {
+		FieldFlag(byte mask, boolean isFirst) {
+			this.mask = mask;
+			this.isFirst = isFirst;
+		}
+
+		@Override
+		public String toString() {
+			return this.name().substring(4).toLowerCase();
+		}
+
+	}
+
+	/**
+	 * Represents a flag applying to a method.
+	 */
+	public enum MethodFlag {
+
+		//TODO: document
+		ACC_PUBLIC((byte)0x01, false),
+		ACC_PRIVATE((byte)0x02, false),
+		ACC_PROTECTED((byte)0x04, false),
+		ACC_STATIC((byte)0x08, false),
+		ACC_FINAL((byte)0x10, false),
+		ACC_SYNCHRONIZED((byte)0x20, false),
+		ACC_BRIDGE((byte)0x40, false),
+		ACC_VARARGS((byte)0x80, false),
+		ACC_NATIVE((byte)0x01, true),
+		ACC_ABSTRACT((byte)0x04, true),
+		ACC_STRICT((byte)0x08, true),
+		ACC_SYNTHETIC((byte)0x10, true);
+
+		private byte mask;
+		private boolean isFirst;
+
+		MethodFlag(byte mask, boolean isFirst) {
 			this.mask = mask;
 			this.isFirst = isFirst;
 		}

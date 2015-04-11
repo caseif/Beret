@@ -43,6 +43,7 @@ public class ClassInfo {
 
 	private static final int CONSTANT_POOL_START = 10; // this will never change
 	private static int INTERFACE_POOL_START;
+	private static int METHOD_POOL_START;
 
 	final byte[] bytes;
 
@@ -60,6 +61,8 @@ public class ClassInfo {
 	private String[] interfacePool;
 
 	private FieldInfo[] fields;
+
+	private MethodInfo[] methods;
 
 	/**
 	 * Loads a class file from the given {@link InputStream}.
@@ -89,6 +92,7 @@ public class ClassInfo {
 		loadClassInfo();
 		loadInterfaces();
 		loadFields();
+		loadMethods();
 	}
 
 	/**
@@ -238,6 +242,26 @@ public class ClassInfo {
 				offset += attr.getInfo().length;
 			}
 		}
+		METHOD_POOL_START = offset;
+	}
+
+	public void loadMethods() {
+		int offset = METHOD_POOL_START;
+		int methodCount = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
+		methods = new MethodInfo[methodCount];
+		offset += 2;
+		for (int i = 0; i < methodCount; i++) {
+			byte[] info = new byte[bytes.length - offset];
+			System.arraycopy(bytes, offset, info, 0, info.length);
+			methods[i] = new MethodInfo(this, info);
+			offset += 8; // field access, name, descriptor, and attribute count
+			System.out.println("Discovered size: " + methods[i].getAttributes().length);
+			for (AttributeStructure attr : methods[i].getAttributes()) {
+				offset += 6; // attribute name and length
+				offset += attr.getInfo().length;
+				System.out.println("ClassInfo: " + attr.getInfo().length);
+			}
+		}
 	}
 
 	/**
@@ -279,7 +303,7 @@ public class ClassInfo {
 		}
 		sb.deleteCharAt(sb.length() - 1);
 
-		sb.append("\n");
+		sb.append("\n\n");
 		sb.append("Interfaces:").append("\n");
 		for (String s : interfacePool) {
 			sb.append("    ").append(s).append("\n");
@@ -298,7 +322,26 @@ public class ClassInfo {
 			sb.append("        ").append("Descriptor: ").append(f.getDescriptor()).append("\n");
 			sb.append("        ").append("Attributes:").append("\n");
 			for (AttributeStructure attr : f.getAttributes()) {
-				sb.append("            ").append(attr.getName()).append(Util.bytesToHex(attr.getInfo())).append("\n");
+				sb.append("            ").append(attr.getName()).append(": ")
+						.append(Util.bytesToHex(attr.getInfo())).append("\n");
+			}
+		}
+
+		sb.append("\n");
+		sb.append("Methods:").append("\n");
+		for (MethodInfo f : methods) {
+			sb.append("    ").append(f.getName()).append(":").append("\n");
+			sb.append("        ").append("Access flags: ");
+			assert f.getAccess().getTargetType() == AccessFlag.AccessTarget.METHOD;
+			for (AccessFlag.MethodFlag flag : (Set<AccessFlag.MethodFlag>)f.getAccess().getFlags()) {
+				sb.append(flag.toString()).append(" ");
+			}
+			sb.deleteCharAt(sb.length() - 1).append("\n");
+			sb.append("        ").append("Descriptor: ").append(f.getDescriptor()).append("\n");
+			sb.append("        ").append("Attributes:").append("\n");
+			for (AttributeStructure attr : f.getAttributes()) {
+				sb.append("            ").append(attr.getName()).append(": ")
+						.append(Util.bytesToHex(attr.getInfo())).append("\n");
 			}
 		}
 
