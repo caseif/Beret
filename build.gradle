@@ -37,6 +37,8 @@ repositories {
 
 // Project dependencies
 dependencies {
+    testCompile 'junit:junit:4.12'
+
     deployerJars 'org.apache.maven.wagon:wagon-ssh:2.8'
 }
 

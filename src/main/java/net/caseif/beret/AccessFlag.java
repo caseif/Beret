@@ -28,10 +28,63 @@
  */
 package net.caseif.beret;
 
-public class Util {
+import java.util.HashSet;
+import java.util.Set;
 
-	public static short bytesToShort(byte b1, byte b2) {
-		return (short)(b1 * 256 + b2);
+public final class AccessFlag {
+
+	private final Set<FlagType> flags;
+
+	/**
+	 * Constructs a new access flag from the given bitmask.
+	 *
+	 * @param first The first byte of the bitmask
+	 * @param second The second byte of the bitmask
+	 */
+	public AccessFlag(byte first, byte second) {
+		flags = new HashSet<>();
+		for (FlagType ft : FlagType.values()) {
+			if (ft.isFirst && (first & ft.mask) == ft.mask
+					|| !ft.isFirst
+					&& (second & ft.mask) == ft.mask) {
+				flags.add(ft);
+			}
+		}
+		//TODO: verify the flag combination is valid
+	}
+
+	/**
+	 * Gets all access flags set by this {@link AccessFlag}.
+	 *
+	 * @return All access flags set by this {@link AccessFlag}
+	 */
+	public Set<FlagType> getFlags() {
+		return this.flags;
+	}
+
+	/**
+	 * Represents a specific access flag type.
+	 */
+	public enum FlagType {
+
+		//TODO: document
+		ACC_PUBLIC((byte)0x01, false),
+		ACC_FINAL((byte)0x10, false),
+		ACC_SUPER((byte)0x20, false),
+		ACC_INTERFACE((byte)0x02, true),
+		ACC_ABSTRACT((byte)0x04, true),
+		ACC_SYNTHETIC((byte)0x10, true),
+		ACC_ANNOTATION((byte)0x20, true),
+		ACC_ENUM((byte)0x40, true);
+
+		private byte mask;
+		private boolean isFirst;
+
+		FlagType(byte mask, boolean isFirst) {
+			this.mask = mask;
+			this.isFirst = isFirst;
+		}
+
 	}
 
 }

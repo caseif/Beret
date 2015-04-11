@@ -28,10 +28,35 @@
  */
 package net.caseif.beret;
 
-public class Util {
+import static net.caseif.beret.AccessFlag.FlagType.ACC_ABSTRACT;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_ANNOTATION;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_ENUM;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_FINAL;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_INTERFACE;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_PUBLIC;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_SUPER;
+import static net.caseif.beret.AccessFlag.FlagType.ACC_SYNTHETIC;
 
-	public static short bytesToShort(byte b1, byte b2) {
-		return (short)(b1 * 256 + b2);
+import org.junit.Test;
+
+import java.util.Arrays;
+
+public class AccessFlagTest {
+
+	@Test
+	public void testFlags() {
+		testFlag((byte)0x02, (byte)0x10, ACC_INTERFACE, ACC_FINAL);
+		testFlag((byte)0x12, (byte)0x10, ACC_SYNTHETIC, ACC_INTERFACE, ACC_FINAL);
+		testFlag((byte)0x12, (byte)0x11, ACC_SYNTHETIC, ACC_INTERFACE, ACC_FINAL, ACC_PUBLIC);
+		testFlag((byte)0x12, (byte)0x21, ACC_SYNTHETIC, ACC_INTERFACE, ACC_SUPER, ACC_PUBLIC);
+		testFlag((byte)0x24, (byte)0x10, ACC_ANNOTATION, ACC_ABSTRACT, ACC_FINAL);
+		testFlag((byte)0x44, (byte)0x10, ACC_ENUM, ACC_ABSTRACT, ACC_FINAL);
+	}
+
+	private void testFlag(byte first, byte second, AccessFlag.FlagType... expected) {
+		AccessFlag flag = new AccessFlag(first, second);
+		assert flag.getFlags().containsAll(Arrays.asList(expected)); // check it has all the flags we expect
+		assert Arrays.asList(expected).containsAll(flag.getFlags()); // check it doesn't have any unexpected flags
 	}
 
 }

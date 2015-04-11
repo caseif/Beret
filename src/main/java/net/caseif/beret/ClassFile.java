@@ -1,3 +1,31 @@
+/*
+ * New BSD License (BSD-new)
+ *
+ * Copyright (c) 2015 Maxim Roncacé
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     - Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     - Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     - Neither the name of the copyright holder nor the names of its contributors
+ *       may be used to endorse or promote products derived from this software
+ *       without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package net.caseif.beret;
 
 import net.caseif.beret.structures.field.ConstantStructure;
@@ -11,12 +39,17 @@ import java.util.List;
 
 public class ClassFile {
 
-	final private byte[] bytes;
+	private final int CONSTANT_POOL_START = 10; // this will never change
+
+	private final byte[] bytes;
 
 	private short majorVersion;
 	private short minorVersion;
 
 	private ConstantStructure[] constantPool;
+	private int constantPoolLength;
+
+	private AccessFlag accessFlag;
 
 	/**
 	 * Loads a class file from the given {@link InputStream}.
@@ -42,6 +75,7 @@ public class ClassFile {
 		}
 		parseVersion();
 		loadConstantPool();
+		loadAccessFlag();
 	}
 
 	/**
@@ -59,7 +93,7 @@ public class ClassFile {
 	 * Parses the major/minor version from the loaded bytecode.
 	 */
 	private void parseVersion() {
-		this.minorVersion = Util.bytesToShort(bytes[4], bytes[5]); // parse two bytes into a short
+		this.minorVersion = Util.bytesToShort(bytes[4], bytes[5]);
 		this.majorVersion = Util.bytesToShort(bytes[6], bytes[7]);
 	}
 
@@ -67,8 +101,8 @@ public class ClassFile {
 	 * Loads the constant pool from the loaded bytecode.
 	 */
 	private void loadConstantPool() {
-		short poolSize = Util.bytesToShort(bytes[8], bytes[9]); // parse two bytes into a short
-		poolSize -= 1; // the pool size is defined as one larger than it actually is
+		short poolSize = Util.bytesToShort(bytes[8], bytes[9]);
+		--poolSize; // indices start at 1 for whatever reason
 		constantPool = new ConstantStructure[poolSize];
 		int offset = 10;
 		for (int i = 0; i < poolSize; i++) {
@@ -79,19 +113,28 @@ public class ClassFile {
 				short length = Util.bytesToShort(bytes[offset], bytes[offset + 1]); // get defined length
 				offset += 2; // move offset past length indicator
 				struct = new ConstantStructure(tag, length);
-			}
-			else {
+			} else {
 				struct = new ConstantStructure(tag);
 			}
 			int length = struct.getLength(); // get expected length
 			byte[] content = new byte[length]; // create empty array of expected size
-			for (int j = 0; j < length; j++) {
-				content[j] = bytes[offset + j]; // populate the array with a subset of the class content
-			}
+			System.arraycopy(bytes, offset, content, 0, length);
 			struct.setInfo(content); // set the info of the current structure
 			offset += length; // move the offset to the next structure
 			constantPool[i] = struct; // globally store the loaded structure
 		}
+		constantPoolLength = offset - 10;
+	}
+
+	/**
+	 * Loads the class access flag.
+	 */
+	private void loadAccessFlag() {
+		System.out.println(constantPoolLength);
+		System.out.println(bytes[CONSTANT_POOL_START + constantPoolLength]);
+		System.out.println(bytes[CONSTANT_POOL_START + constantPoolLength + 1]);
+		accessFlag = new AccessFlag(bytes[CONSTANT_POOL_START + constantPoolLength],
+				bytes[CONSTANT_POOL_START + constantPoolLength + 1]);
 	}
 
 	/**
@@ -111,12 +154,11 @@ public class ClassFile {
 		int i = 0;
 		for (ConstantStructure cs : constantPool) {
 			sb.append("    ");
-			sb.append(i).append(": ");
-			sb.append(cs.getType().name()).append(" - ");
+			sb.append(i + 1).append(": ");
+			sb.append(cs.getType().toString()).append(" - ");
 			if (cs.getType() == ConstantStructure.StructureType.UTF_8) {
 				sb.append(new String(cs.getInfo(), Charset.forName("UTF-8")));
-			}
-			else {
+			} else {
 				for (byte b : cs.getInfo()) {
 					sb.append(b).append(" ");
 				}
@@ -126,9 +168,14 @@ public class ClassFile {
 			++i;
 		}
 		sb.append("\n");
+		sb.append("Access flags:").append("\n");
+		for (AccessFlag.FlagType ft : accessFlag.getFlags()) {
+			sb.append("    ").append(ft.toString()).append("\n");
+		}
 
 		stream.write(sb.toString().getBytes(Charset.forName("UTF-8")));
 		stream.flush();
 	}
 
 }
+

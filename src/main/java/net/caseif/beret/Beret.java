@@ -54,8 +54,7 @@ public class Beret {
 		ClassFile cf = null;
 		try {
 			cf = new ClassFile(new FileInputStream(input));
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.err.println("Invalid input file!");
 			System.exit(1);
@@ -63,8 +62,7 @@ public class Beret {
 		File output = new File(args[1]);
 		try {
 			cf.writeOut(new FileOutputStream(output));
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.err.println("Failed to write to output file!");
 			System.exit(1);
