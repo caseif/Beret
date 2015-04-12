@@ -38,61 +38,362 @@ import java.util.Map;
  */
 public enum Instruction {
 
+	/**
+	 * Loads an references from an array onto the stack.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	AALOAD(0x32, 0),
+	/**
+	 * Stores a reference in an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	AASTORE(0x53, 0),
+	/**
+	 * Pushes a <code>null</code> references onto the stack.
+	 *
+	 * <p>Stack: <code>() -> null</code></p>
+	 */
 	ACONST_NULL(0x01, 0),
+	/**
+	 * Loads a reference onto the stack from local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> objectref</code></p>
+	 */
 	ALOAD(0x19, 1),
+	/**
+	 * Loads a reference onto the stack from local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>() -> objectref</code></p>
+	 */
 	ALOAD_0(0x2A, 0),
+	/**
+	 * Loads a reference onto the stack from local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>() -> objectref</code></p>
+	 */
 	ALOAD_1(0x2B, 0),
+	/**
+	 * Loads a reference onto the stack from local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>() -> objectref</code></p>
+	 */
 	ALOAD_2(0x2C, 0),
+	/**
+	 * Loads a reference onto the stack from local variable <code>3</code>.
+	 *
+	 * <p>Stack: <code>() -> objectref</code></p>
+	 */
 	ALOAD_3(0x2D, 0),
+	/**
+	 * Creates a new array of length <code>count</code> and type
+	 * <code>typeref</code>.
+	 *
+	 * <p>Accepts: <code>short typeref</code></p>
+	 * <p>Stack: <code>count -> arrayref</code></p>
+	 */
 	ANEWARRAY(0xBD, 2),
+	/**
+	 * Returns a reference from a method and clears the stack.
+	 *
+	 * <p>Stack: objectref -> [empty]</p>
+	 */
 	ARETURN(0xB0, 0),
+	/**
+	 * Replaces <code>arrayref</code> on the top of the stack with its length.
+	 *
+	 * <p>Stack: <code>arrayref -> length</code></p>
+	 */
 	ARRAYLENGTH(0xBE, 0),
+	/**
+	 * Stores a reference into local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	ASTORE(0x3A, 1),
+	/**
+	 * Stores a references into local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	ASTORE_0(0x4B, 0),
+	/**
+	 * Stores a references into local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	ASTORE_1(0x4C, 0),
+	/**
+	 * Stores a references into local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	ASTORE_2(0x4D, 0),
+	/**
+	 * Stores a references into local variable <code>3</code>.
+	 *
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	ASTORE_3(0x4E, 0),
+	/**
+	 * Throws an error or exception and clears the stack save the reference to
+	 * the Throwable at the top.
+	 *
+	 * <p>Stack: <code>objectref -> [empty], objectref</code></p>
+	 */
 	ATHROW(0xBF, 0),
+	/**
+	 * Loads a byte or boolean value from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	BALOAD(0x33, 0),
+	/**
+	 * Stores a byte or boolean value into an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value</code></p>
+	 */
 	BASTORE(0x54, 0),
+	/**
+	 * Pushes a byte onto the stack as an integer value.
+	 *
+	 * <p>Accepts: <code>byte value</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	BIPUSH(0x10, 1),
+	/**
+	 * Reserved for breakpoints in Java debuggers; should not appear in a class
+	 * file.
+	 */
 	BREAKPOINT(0xCA, 0),
+	/**
+	 * Loads a char from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	CALOAD(0x34, 0),
+	/**
+	 * Stores a char into an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	CASTORE(0x55, 0),
+	/**
+	 * Checks whether <code>objectref</code> matches of the type of the class at
+	 * <code>index</code> of the constant pool.
+	 *
+	 * <p>Accepts: <code>short index</code></p>
+	 * <p>Stack: <code>objectref -> objectref</code></p>
+	 */
 	CHECKCAST(0xC, 2),
+	/**
+	 * Converts a double to a float.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	D2F(0x90, 0),
+	/**
+	 * Converts a double to an integer.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	D2I(0x8E, 0),
+	/**
+	 * Converts a double to an long.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	D2L(0x8F, 0),
+	/**
+	 * Adds two doubles.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DADD(0x63, 0),
+	/**
+	 * Loads a double from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	DALOAD(0x31, 0),
+	/**
+	 * Stores a double into an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	DASTORE(0x52, 0),
+	/**
+	 * Checks whether double <code>value1</code> is greater than double
+	 * <code>value2</code>.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DCMPG(0x98, 0),
+	/**
+	 * Checks whether double <code>value1</code> is less than double
+	 * <code>value2</code>
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DCMPL(0x97, 0),
+	/**
+	 * Pushes the double constant <code>0.0</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 0.0</code></p>
+	 */
 	DCONST_0(0x0E, 0),
+	/**
+	 * Pushes the double constant <code>1.0</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 1.0</code></p>
+	 */
 	DCONST_1(0x0F, 0),
+	/**
+	 * Divides two doubles.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DDIV(0x6F, 0),
+	/**
+	 * Loads a double from local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	DLOAD(0x18, 1),
+	/**
+	 * Loads a double from local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	DLOAD_0(0x26, 0),
+	/**
+	 * Loads a double from local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	DLOAD_1(0x27, 0),
+	/**
+	 * Loads a double from local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	DLOAD_2(0x28, 0),
+	/**
+	 * Loads a double from local variable <code>3</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	DLOAD_3(0x29, 0),
+	/**
+	 * Multiplies two doubles.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DMUL(0x6B, 0),
+	/**
+	 * Negates a double.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	DNEG(0x77, 0),
+	/**
+	 * Gets the remainder from division between two doubles (modulus).
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DREM(0x73, 0),
+	/**
+	 * Returns a double from a method and clears the stack.
+	 *
+	 * <p>Stack: <code>value -> [empty]</code></p>
+	 */
 	DRETURN(0xAF, 0),
+	/**
+	 * Stores double <code>value</code> into local variable <code>index</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	DSTORE(0x39, 0),
+	/**
+	 * Stores double <code>value</code> into local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	DSTORE_0(0x47, 0),
+	/**
+	 * Stores double <code>value</code> into local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	DSTORE_1(0x48, 0),
+	/**
+	 * Stores double <code>value</code> into local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	DSTORE_2(0x49, 0),
+	/**
+	 * Stores double <code>value</code> into local variable <code>3</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	DSTORE_3(0x4A, 0),
+	/**
+	 * Subtracts a double from another.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	DSUB(0x67, 0),
+	/**
+	 * Duplicates the value on top of the stack.
+	 *
+	 * <p>Stack: <code>value -> value, value</code></p>
+	 */
 	DUP(0x59, 0),
+	/**
+	 * Inserts a copy of the top value of the stack two values from the top.
+	 *
+	 * <p>Precondition: The top two values of the stack must not be of type
+	 * double or long</p>
+	 * <p>Stack: <code>value1, value2 -> value2, value1, value2</code></p>
+	 */
 	DUP_X1(0x5A, 0),
+	/**
+	 * Inserts a copy of the top value of the stack two (if <code>value2</code>
+	 * is double or long, in which case it occupies the entry of
+	 * <code>value3</code>) or three (if <code>value2</code> is neither a double
+	 * or long) values from the top.
+	 *
+	 * <p>Stack: <code>value1, value2, value3 -> value3, value1, value2, value3
+	 * </code></p>
+	 */
 	DUP_X2(0x5B, 0),
+	/**
+	 * Duplicates the top two stack words (a word being two entries or 8 bytes).
+	 *
+	 * <p>Stack: <code>value1, value2 -> value1, value2, value1, value2</code>
+	 * </p>
+	 */
 	DUP2(0x5C, 0),
+	/**
+	 * Duplicates the top two stack words and inserts them beneath the third
+	 * word.
+	 *
+	 * <p>Stack: <code>value1, value2, value3 -> value2, value3, value1, value2,
+	 * value3</code></p>
+	 */
 	DUP2_X1(0x5D, 0),
+	/**
+	 * Duplicates the top two stack words and inserts them beneath the fourth
+	 * word.
+	 *
+	 * <p>Stack: <code>value1, value2, value3, value4 -> value3, value4, value1,
+	 * value2, value3, value4</code></p>
+	 */
 	DUP2_X2(0x5E, 0),
 	F2D(0x8D, 0),
 	F2I(0x8B, 0),
