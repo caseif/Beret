@@ -395,97 +395,625 @@ public enum Instruction {
 	 * value2, value3, value4</code></p>
 	 */
 	DUP2_X2(0x5E, 0),
+	/**
+	 * Converts a float to a double.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	F2D(0x8D, 0),
+	/**
+	 * Converts a float to an int.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	F2I(0x8B, 0),
+	/**
+	 * Converts a float to a long.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	F2L(0x8C, 0),
+	/**
+	 * Adds two floats.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	FADD(0x62, 0),
+	/**
+	 * Loads a float from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	FALOAD(0x30, 0),
+	/**
+	 * Stores a float in an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	FASTORE(0x51, 0),
+	/**
+	 * Checks whether float <code>value1</code> is greater than float
+	 * <code>value2</code>.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	FCMPG(0x96, 0),
+	/**
+	 * Checks whether float <code>value1</code> is less than float
+	 * <code>value2</code>.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	FCMPL(0x95, 0),
+	/**
+	 * Pushes the float constant <code>0.0</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 0.0f</code></p>
+	 */
 	FCONST_0(0x0B, 0),
+	/**
+	 * Pushes the float constant <code>1.0</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 1.0f</code></p>
+	 */
 	FCONST_1(0x0C, 0),
+	/**
+	 * Pushes the float constant <code>2.0</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 2.0f</code></p>
+	 */
 	FCONST_2(0x0D, 0),
+	/**
+	 * Divides two floats.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	FDIV(0x6E, 0),
+	/**
+	 * Loads a float onto the stack from local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	FLOAD(0x17, 1),
+	/**
+	 * Loads a float onto the stack from local variable <code>0</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	FLOAD_0(0x22, 0),
+	/**
+	 * Loads a float onto the stack from local variable <code>1</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	FLOAD_1(0x23, 0),
+	/**
+	 * Loads a float onto the stack from local variable <code>2</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	FLOAD_2(0x24, 0),
+	/**
+	 * Loads a float onto the stack from local variable <code>3</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	FLOAD_3(0x25, 0),
+	/**
+	 * Multiplies two floats.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	FMUL(0x6A, 0),
+	/**
+	 * Negates a float.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	FNEG(0x76, 0),
+	/**
+	 * Gets the remainder from a division between two floats (modulus).
+	 *
+	 * <p>Stack: value1, value2 -> result</p>
+	 */
 	FREM(0x72, 0),
+	/**
+	 * Returns a float from a method.
+	 *
+	 * <p>Stack: <code>value -> [empty]</code></p>
+	 */
 	FRETURN(0xAE, 0),
+	/**
+	 * Stores a float in local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	FSTORE(0x38, 1),
+	/**
+	 * Stores a float in local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	FSTORE_0(0x43, 0),
+	/**
+	 * Stores a float in local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	FSTORE_1(0x44, 0),
+	/**
+	 * Stores a float in local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	FSTORE_2(0x45, 0),
+	/**
+	 * Subtracts two floats.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	FSUB(0x66, 0),
+	/**
+	 * Gets field <code>fieldref</code> of object <code>objectref</code>.
+	 *
+	 * <p>Accepts: <code>short fieldref</code></p>
+	 * <p>Stack: <code>objectref -> value</code></p>
+	 */
 	GETFIELD(0xB4, 2),
+	/**
+	 * Gets static field <code>fieldref</code> of object <code>objectref</code>.
+	 *
+	 * <p>Accepts: <code>short fieldref</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	GETSTATIC(0xB2, 2),
+	/**
+	 * Goes to instruction at <code>branchoffset</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 */
 	GOTO(0xA7, 2),
-	GOTO_W(0xC8, 0),
+	/**
+	 * Goes to instruction at <code>branchoffset</code>.
+	 *
+	 * <p>Accepts: <code>int branchoffset</code></p>
+	 */
+	GOTO_W(0xC8, 4),
+	/**
+	 * Converts an int to a byte.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	I2B(0x91, 0),
+	/**
+	 * Converts an int to a byte.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	I2C(0x92, 0),
+	/**
+	 * Converts an int to a character.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	I2D(0x87, 0),
+	/**
+	 * Converts an int to a double.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	I2F(0x86, 0),
+	/**
+	 * Converts an int to a long.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	I2L(0x85, 0),
+	/**
+	 * Converts an int to a short.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	I2S(0x93, 0),
+	/**
+	 * Adds two ints.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	IADD(0x60, 0),
+	/**
+	 * Loads an int from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	IALOAD(0x2E, 0),
+	/**
+	 * Performs a bitwise AND on two ints.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	IAND(0x7E, 0),
+	/**
+	 * Stores an int into an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	IASTORE(0x41, 0),
+	/**
+	 * Loads the int constant <code>-1</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> -1</code></p>
+	 */
 	ICONST_M1(0x02, 0),
+	/**
+	 * Loads the int constant <code>0</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 0</code></p>
+	 */
 	ICONST_0(0x03, 0),
+	/**
+	 * Loads the int constant <code>1</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 1</code></p>
+	 */
 	ICONST_1(0x04, 0),
+	/**
+	 * Loads the int constant <code>2</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 2</code></p>
+	 */
 	ICONST_2(0x05, 0),
+	/**
+	 * Loads the int constant <code>3</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 3</code></p>
+	 */
 	ICONST_3(0x06, 0),
+	/**
+	 * Loads the int constant <code>4</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 4</code></p>
+	 */
 	ICONST_4(0x07, 0),
+	/**
+	 * Loads the int constant <code>5</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 5</code></p>
+	 */
 	ICONST_5(0x08, 0),
+	/**
+	 * Divides two ints.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	IDIV(0x6C, 0),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if the two
+	 * references are equal.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ACMPEQ(0xA5, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if the two
+	 * references are not equal.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ACMPNE(0xA6, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if the two ints are
+	 * equal.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ICMPEQ(0x9F, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value1</code> is greater than or equal to <code>value2</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ICMPGE(0xA2, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value1</code> is greater than <code>value2</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ICMPGT(0xA3, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value1</code> is less than or equal to <code>value2</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ICMPLE(0xA4, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value1</code> is less than <code>value2</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ICMPLT(0xA1, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if the two
+	 * ints are not equal.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	IF_ICMPNE(0xA0, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is equal to 0.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFEQ(0x99, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is greater than or equal to 0.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFGE(0x9C, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is greater than 0.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFGT(0x9D, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is less than or equal to 0.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFLE(0x9E, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is less than 0.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFLT(0x9B, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is not equal to 0.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFNE(0x9A, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is not <code>null</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFNONNULL(0xC7, 2),
+	/**
+	 * Branches to instruction at <code>branchoffset</code> if
+	 * <code>value</code> is <code>null</code>.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	IFNULL(0xC6, 2),
+	/**
+	 * Increment local variable <code>index</code> by signed byte
+	 * <code>const</code>.
+	 *
+	 * <p>Accepts: <code>byte index, byte const</code></p>
+	 */
 	IINC(0x84, 2),
+	/**
+	 * Loads int <code>value</code> from local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	ILOAD(0x15, 1),
+	/**
+	 * Loads int <code>value</code> from local variable <code>0</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	ILOAD_0(0x1A, 0),
+	/**
+	 * Loads int <code>value</code> from local variable <code>1</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	ILOAD_1(0x1B, 0),
+	/**
+	 * Loads int <code>value</code> from local variable <code>2</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	ILOAD_2(0x1C, 0),
+	/**
+	 * Loads int <code>value</code> from local variable <code>3</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	ILOAD_3(0x1D, 0),
+	/**
+	 * Reserved for implementation-dependent operations within debuggers. This
+	 * instruction should not appear in any class file.
+	 */
 	IMPDEP1(0xFE, 0),
+	/**
+	 * Reserved for implementation-dependent operations within debuggers. This
+	 * instruction should not appear in any class file.
+	 */
 	IMPDEP2(0xFF, 0),
+	/**
+	 * Multiplies two ints.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	IMUL(0x68, 0),
+	/**
+	 * Negates an int.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	INEG(0x74, 0),
+	/**
+	 * Determines if <code>objectref</code> is of the type referenced by
+	 * <code>index</code>.
+	 *
+	 * <p>Stack: <code>short index</code></p>
+	 */
 	INSTANCEOF(0xC1, 2),
+	/**
+	 * Invokes a dynamic method referenced by <code>index</code> and puts the
+	 * result on the stack.
+	 *
+	 * <p>Accepts: <code>short index, 0, 0</code></p>
+	 * <p>Stack: <code>args... -> result</code></p>
+	 */
 	INVOKEDYNAMIC(0xBA, 4),
+	/**
+	 * Invokes an interface method on object <code>objectref</code> and puts the
+	 * result on the stack.
+	 *
+	 * <p>Accepts: <code>short index, count, 0</code></p>
+	 * <p>Stack: <code>objectref, args... -> result</code></p>
+	 */
 	INVOKEINTERFACE(0xB9, 4),
+	/**
+	 * Invokes an instance method on object <code>objectref</code> and puts the
+	 * result on the stack.
+	 *
+	 * <p>Accepts: <code>short index, count, 0</code></p>
+	 * <p>Stack: <code>objectref, args... -> result</code></p>
+	 */
 	INVOKESPECIAL(0xB7, 2),
+	/**
+	 * Invokes a static method on object <code>objectref</code> and puts the
+	 * result on the stack.
+	 *
+	 * <p>Accepts: <code>short index, count, 0</code></p>
+	 * <p>Stack: <code>objectref, args... -> result</code></p>
+	 */
 	INVOKESTATIC(0xB8, 2),
+	/**
+	 * Invokes a virtual method on object <code>objectref</code> and puts the
+	 * result on the stack.
+	 *
+	 * <p>Accepts: <code>short index, count, 0</code></p>
+	 * <p>Stack: <code>objectref, args... -> result</code></p>
+	 */
 	INVOKEVIRTUAL(0xB6, 2),
+	/**
+	 * Performs a bitwise int OR operation on the two values.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	IOR(0x80, 0),
+	/**
+	 * Performs a logical int remainder operation on the two values.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	IREM(0x70, 0),
+	/**
+	 * Returns an int from a method.
+	 *
+	 * <p>Stack: <code>value -> [empty]</code></p>
+	 */
 	IRETURN(0xAC, 0),
+	/**
+	 * Performs an int shift left operation on the two values.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	ISHL(0x78, 0),
+	/**
+	 * Performs an int arithmetic shift right operation on the two values.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
+	ISHR(0x7A, 0),
+	/**
+	 * Stores int <code>value</code> into variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	ISTORE(0x36, 1),
+	/**
+	 * Stores int <code>value</code> into variable <code>0</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	ISTORE_0(0x3B, 0),
+	/**
+	 * Stores int <code>value</code> into variable <code>1</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	ISTORE_1(0x3C, 0),
+	/**
+	 * Stores int <code>value</code> into variable <code>2</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	ISTORE_2(0x3D, 0),
+	/**
+	 * Stores int <code>value</code> into variable <code>3</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	ISTORE_3(0x3E, 0),
+	/**
+	 * Subtracts two ints.
+	 *
+	 * <p>Stack: <code>value2, value2 -> result</code></p>
+	 */
 	ISUB(0x64, 0),
+	/**
+	 * Performs an int logical shift right operation on the two values.
+	 *
+	 * <p>Stack: <code>value2, value2 -> result</code></p>
+	 */
 	IUSHR(0x7C, 0),
+	/**
+	 * Performs an int XOR operation on the two values.
+	 *
+	 * <p>Stack: <code>value2, value2 -> result</code></p>
+	 */
 	IXOR(0x82, 0),
 	JSR(0xA8, 2),
 	JSR_W(0xC9, 4),
