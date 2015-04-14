@@ -36,6 +36,7 @@ import java.util.Map;
  *
  * @author Max Roncacé
  */
+@SuppressWarnings("unused")
 public enum Instruction {
 
 	/**
@@ -1015,60 +1016,360 @@ public enum Instruction {
 	 * <p>Stack: <code>value2, value2 -> result</code></p>
 	 */
 	IXOR(0x82, 0),
+	/**
+	 * Jumps to the instruction at <code>branchoffset</code> and places the
+	 * current address on the stack.
+	 *
+	 * <p>Accepts: <code>short branchoffset</code></p>
+	 * <p>Stack: <code>() -> address</code></p>
+	 */
 	JSR(0xA8, 2),
+	/**
+	 * Jumps to the instruction at <code>branchoffset</code> and places the
+	 * current address on the stack.
+	 *
+	 * <p>Accepts: <code>int branchoffset</code></p>
+	 * <p>Stack: <code>() -> address</code></p>
+	 */
 	JSR_W(0xC9, 4),
+	/**
+	 * Converts a long to a double.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	L2D(0x8A, 0),
+	/**
+	 * Converts a long to a float.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	L2F(0x89, 0),
+	/**
+	 * Converts a long to an int.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	L2I(0x88, 0),
+	/**
+	 * Adds two long values.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LADD(0x61, 0),
+	/**
+	 * Loads a long from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	LALOAD(0x2F, 0),
+	/**
+	 * Performs a bitwise AND operation on two longs.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LAND(0x7F, 0),
+	/**
+	 * Stores a long into an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	LASTORE(0x50, 0),
+	/**
+	 * Checks whether long <code>value1</code> is greater than long
+	 * <code>value2</code>.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LCMP(0x94, 0),
+	/**
+	 * Pushes the long constant <code>0L</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 0L</code></p>
+	 */
 	LCONST_0(0x09, 0),
+	/**
+	 * Pushes the long constant <code>1L</code> onto the stack.
+	 *
+	 * <p>Stack: <code>() -> 1L</code></p>
+	 */
 	LCONST_1(0x0A, 0),
+	/**
+	 * Pushes a constant <code>index</code> (String, int, or float) from the
+	 * constant pool onto the stack.
+	 *
+	 * <p>Accepts: byte index</p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LDC(0x12, 1),
+	/**
+	 * Pushes a constant <code>index</code> (String, int, or float) from the
+	 * constant pool onto the stack.
+	 *
+	 * <p>Accepts: <code>short index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LDC_W(0x13, 2),
+	/**
+	 * Pushes a constant <code>index</code> (double or long) from the constant
+	 * pool onto the stack.
+	 *
+	 * <p>Accepts: <code>index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LDC2_W(0x14, 2),
+	/**
+	 * Divides two longs.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LDIV(0x6D, 0),
+	/**
+	 * Loads a long value onto the stack from local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LLOAD(0x16, 1),
+	/**
+	 * Loads a long value onto the stack from local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LLOAD_0(0x1E, 0),
+	/**
+	 * Loads a long value onto the stack from local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LLOAD_1(0x1F, 0),
+	/**
+	 * Loads a long value onto the stack from local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LLOAD_2(0x20, 0),
+	/**
+	 * Loads a long value onto the stack from local variable <code>3</code>.
+	 *
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	LLOAD_3(0x21, 0),
+	/**
+	 * Multiplies two longs.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LMUL(0x69, 0),
+	/**
+	 * Negates a long.
+	 *
+	 * <p>Stack: <code>value -> result</code></p>
+	 */
 	LNEG(0x75, 0),
+	/**
+	 * TODO (Seriously, I have no idea how this works at the moment)
+	 */
 	LOOKUPSWITCH(0xAB, -1),
+	/**
+	 * Performs a bitwise OR operation on two longs.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LOR(0x81, 0),
+	/**
+	 * Gets the remainder of division of two longs (modulus).
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LREM(0x71, 0),
+	/**
+	 * Returns a long value from a method and clears the stack.
+	 *
+	 * <p>Stack: <code>value -> [empty]</code></p>
+	 */
 	LRETURN(0xAD, 0),
+	/**
+	 * Performs a bitwise left shift operation of long <code>value1</code> by
+	 * <code>value2</code> positions.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LSHL(0x79, 0),
+	/**
+	 * Performs a bitwise right shift operation of long <code>value2</code> by
+	 * <code>value2</code> positions.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LSHR(0x7B, 0),
+	/**
+	 * Stores long <code>value</code> in local variable <code>index</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	LSTORE(0x37, 1),
+	/**
+	 * Stores long <code>value</code> in local variable <code>0</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	LSTORE_0(0x3F, 0),
+	/**
+	 * Stores long <code>value</code> in local variable <code>1</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	LSTORE_1(0x40, 0),
+	/**
+	 * Stores long <code>value</code> in local variable <code>2</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	LSTORE_2(0x41, 0),
+	/**
+	 * Stores long <code>value</code> in local variable <code>3</code>.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	LSTORE_3(0x42, 0),
+	/**
+	 * Subtracts a long value from another.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LSUB(0x65, 0),
+	/**
+	 * Performs a bitwise right shift operation of long <code>value2</code> by
+	 * <code>value2</code> positions, unsigned.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LUSHR(0x7D, 0),
+	/**
+	 * Performs a bitwise XOR operation on two long values.
+	 *
+	 * <p>Stack: <code>value1, value2 -> result</code></p>
+	 */
 	LXOR(0x83, 0),
+	/**
+	 * Enters monitor state for an object (equivalent to start of
+	 * <code>synchronized</code> block).
+	 *
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	MONITORENTER(0xC2, 0),
+	/**
+	 * Exits monitor state for an object (equivalent to end of
+	 * <code>synchronized</code> block).
+	 *
+	 * <p>Stack: <code>objectref -> ()</code></p>
+	 */
 	MONITOREXIT(0xC3, 0),
+	/**
+	 * Creates a new array of <code>dimensions</code> with elements of type
+	 * <code>classref</code>. The size of each repsective dimension is defined
+	 * by <code>count1, count2,</code> etc.
+	 *
+	 * <p>Accepts: <code>short classref, byte dimensions</code></p>
+	 * <p>Stack: <code>count1[, count2,...] -> arrayref</code></p>
+	 */
 	MULTIANEWARRAY(0xC5, 3),
+	/**
+	 * Creates a new object of type <code>classref</code>.
+	 *
+	 * <p>Accepts: <code>short classref</code></p>
+	 * <p>Stack: <code>() -> objectref</code></p>
+	 */
 	NEW(0xBB, 2),
+	/**
+	 * Creates a new array with <code>count</code> elements of primitive type
+	 * <code>atype</code>.
+	 *
+	 * <p>Accepts: <code>byte atype</code></p>
+	 * <p>Stack: <code>count -> arrayref</code></p>
+	 */
 	NEWARRAY(0xBC, 1),
+	/**
+	 * Performs no operation.
+	 */
 	NOP(0x00, 0),
+	/**
+	 * Disgards the top value of the stack.
+	 *
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	POP(0x57, 0),
+	/**
+	 * Disgards the top two values of the stack (or one, if it is of type
+	 * <code>double</code> or <code>long</code>.
+	 *
+	 * <p>Stack: <code>value1, value2 -> ()</code></p>
+	 */
 	POP2(0x58, 0),
+	/**
+	 * Sets <code>fieldref</code> to <code>value</code> in
+	 * <code>objectref</code> to <code>value</code>.
+	 *
+	 * <p>Accepts: <code>short fieldref</code></p>
+	 * <p>Stack: <code>objectref, value -> ()</code></p>
+	 */
 	PUTFIELD(0xB5, 2),
+	/**
+	 * Sets static field <code>fieldref</code> to <code>value</code> in a class.
+	 *
+	 * <p>Accepts: <code>short fieldref</code></p>
+	 * <p>Stack: <code>value -> ()</code></p>
+	 */
 	PUTSTATIC(0xB3, 2),
+	/**
+	 * Continues execution from <code>address</code>.
+	 *
+	 * <p>Accepts: <code>byte index</code></p>
+	 */
 	RET(0xA9, 1),
+	/**
+	 * Returns <code>void</code> from a method.
+	 */
 	RETURN(0xB1, 0),
+	/**
+	 * Loads a short from an array.
+	 *
+	 * <p>Stack: <code>arrayref, index -> value</code></p>
+	 */
 	SALOAD(0x35, 0),
+	/**
+	 * Stores a short in an array.
+	 *
+	 * <p>Stack: <code>arrayref, index, value -> ()</code></p>
+	 */
 	SASTORE(0x56, 0),
+	/**
+	 * Pushes short <code>value</code> onto the stack.
+	 *
+	 * <p>Accepts: <code>short value</code></p>
+	 * <p>Stack: <code>() -> value</code></p>
+	 */
 	SIPUSH(0x11, 2),
+	/**
+	 * Swaps the two top words of the stack, provided they are not
+	 * <code>double</code> or <code>long</code>.
+	 *
+	 * <p>Stack: <code>value1, value2 -> value2, value1</code></p>
+	 */
 	SWAP(0x5F, 0),
+	/**
+	 * Continues execution from an address in the table at offset
+	 * <code>index</code>.
+	 * TODO: Research this
+	 *
+	 * <p>Accepts: TODO</p>
+	 * <p>Stack: <code>index -> ()</code></p>
+	 */
 	TABLESWITCH(0xAA, -1),
+	/**
+	 * TODO: research
+	 */
 	WIDE(0xC4, -1);
 
 	private static Map<Byte, Instruction> codes;
