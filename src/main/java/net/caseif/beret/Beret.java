@@ -28,6 +28,7 @@
  */
 package net.caseif.beret;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -45,7 +46,7 @@ import java.util.List;
 public class Beret {
 
 	public static void main(String[] args) {
-		if (args.length < 2) {
+		if (args.length < 3) {
 			printUsage();
 			System.exit(0);
 		}
@@ -70,21 +71,19 @@ public class Beret {
 			System.err.println("Invalid input file!");
 			System.exit(1);
 		}
-		OutputStream os;
-		try {
+		File output = new File(args[2]);
+		try (OutputStream os = new FileOutputStream(output)) {
 			if (args.length > 2) {
-				File output = new File(args[1]);
 				System.out.println("Writing to " + output.getAbsolutePath() + "...");
-				os = new FileOutputStream(output);
-			} else {
-				os = System.out;
 			}
 			if (action.equalsIgnoreCase("dump")) {
 				cf.dump(os);
-			} else if (action.equalsIgnoreCase("decompile")) {
+			}
+			else if (action.equalsIgnoreCase("decompile")) {
 				System.err.println("Not yet implemented!");
 			}
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 			System.err.println("Failed to write to output stream!");
 			System.exit(1);
@@ -92,7 +91,7 @@ public class Beret {
 	}
 
 	public static void printUsage() {
-		System.out.println("Usage: Beret.jar <command> <class file> [<output file>]");
+		System.out.println("Usage: Beret.jar <command> <class file> <output file>");
 		System.out.println("Available commands:");
 		System.out.println("    dump - Dumps info about a class in an arbitrary format");
 		System.out.println("    decompile - Decompiles a class into its original source code");

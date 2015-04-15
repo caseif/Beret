@@ -403,7 +403,7 @@ public class ClassInfo {
 							.append(" (not dumped)").append("\n");
 					sb.append("        ").append("Body:").append("\n");
 					for (Instruction instr : cs.getCode()) {
-						sb.append("          ").append(instr.getOpcode())
+						sb.append("          ").append(instr.getOpcode().toString().toLowerCase())
 								.append(instr.getExtraBytes().length > 0 ? " " : "")
 								.append(Util.bytesToHex(instr.getExtraBytes())).append("\n");
 					}

@@ -9,7 +9,11 @@ parsing and decompilation of JVM bytecode. More info to come as the project prog
 
 Currently Beret is capable of parsing and dumping partial information from class files. To use this function:
 
-`Beret.jar /path/to/class_file /path/to/dump_file`
+`Beret.jar dump /path/to/class_file /path/to/dump_file`
+
+It will also at some point in the future be capable of total decompilation of class files. To use this function:
+
+`Beret.jar decompile /path/to/class_file /path/to/source_file`
 
 ### Building ###
 
