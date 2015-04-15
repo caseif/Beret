@@ -28,14 +28,16 @@
  */
 package net.caseif.beret;
 
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_ABSTRACT;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_ANNOTATION;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_ENUM;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_FINAL;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_INTERFACE;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_PUBLIC;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_SUPER;
-import static net.caseif.beret.AccessFlag.ClassFlag.ACC_SYNTHETIC;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_ABSTRACT;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_ANNOTATION;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_ENUM;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_FINAL;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_INTERFACE;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_PUBLIC;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_SUPER;
+import static net.caseif.beret.wrapper.synthetic.AccessFlag.ClassFlag.ACC_SYNTHETIC;
+
+import net.caseif.beret.wrapper.synthetic.AccessFlag;
 
 import org.junit.Test;
 

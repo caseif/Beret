@@ -26,13 +26,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.caseif.beret;
+package net.caseif.beret.wrapper;
 
+import net.caseif.beret.wrapper.synthetic.AccessFlag;
+import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
 import net.caseif.beret.structures.CodeStructure;
 import net.caseif.beret.structures.ConstantStructure;
-
-import java.util.LinkedList;
 
 /**
  * Contains information regarding a specific method.

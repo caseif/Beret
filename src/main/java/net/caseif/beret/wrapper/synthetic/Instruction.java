@@ -26,63 +26,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.caseif.beret;
+package net.caseif.beret.wrapper.synthetic;
+
+import net.caseif.beret.Opcode;
 
 /**
- * Represents an exception handler within a method.
+ * Represents an instruction consisting of an opcode and any extra bytes.
  *
  * @author Max Roncacé
  */
-public class ExceptionHandler {
+public class Instruction {
 
-	private MethodInfo parent;
-	private int startIndex;
-	private int endIndex;
-	private int handlerStart;
-	private String catchType;
+	private Opcode opcode;
+	private byte[] extra;
 
-	/**
-	 * Instantiates a new {@link ExceptionHandler} with the given information.
-	 *
-	 * @param parent The parent {@link MethodInfo}
-	 * @param start The index within the method's code array at which this
-	 *              {@link ExceptionHandler} becomes active
-	 * @param end The index within the method's code array at which this
-	 *              {@link ExceptionHandler} ends
-	 * @param handlerStart The index within the method's code array at which
-	 *                     this {@link ExceptionHandler} begins
-	 * @param catchType The class representing the exception this
-	 *                  {@link ExceptionHandler} is designated to catch
-	 */
-	public ExceptionHandler(MethodInfo parent, int start, int end, int handlerStart, String catchType) {
-		if (end <= start) {
-			throw new IllegalArgumentException("Exception handler end index must be greater than start index");
-		}
-		this.parent = parent;
-		this.startIndex = start;
-		this.endIndex = end;
-		this.handlerStart = handlerStart;
-		this.catchType = catchType;
+	public Instruction(Opcode opcode, byte... extraBytes) {
+		assert opcode.getAdditionalBytes() == extraBytes.length;
+		this.opcode = opcode;
+		this.extra = extraBytes;
 	}
 
-	public MethodInfo getParent() {
-		return this.parent;
+	public Opcode getOpcode() {
+		return this.opcode;
 	}
 
-	public int getStartIndex() {
-		return this.startIndex;
-	}
-
-	public int getEndIndex() {
-		return this.endIndex;
-	}
-
-	public int getHandlerStartIndex() {
-		return this.handlerStart;
-	}
-
-	public String getCatchType() {
-		return this.catchType;
+	public byte[] getExtraBytes() {
+		return this.extra;
 	}
 
 }

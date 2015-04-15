@@ -28,7 +28,8 @@
  */
 package net.caseif.beret;
 
-import java.io.BufferedWriter;
+import net.caseif.beret.wrapper.ClassInfo;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

@@ -28,10 +28,10 @@
  */
 package net.caseif.beret.structures;
 
-import net.caseif.beret.ClassInfo;
-import net.caseif.beret.ExceptionHandler;
-import net.caseif.beret.Instruction;
-import net.caseif.beret.MethodInfo;
+import net.caseif.beret.wrapper.ClassInfo;
+import net.caseif.beret.wrapper.synthetic.ExceptionHandler;
+import net.caseif.beret.wrapper.synthetic.Instruction;
+import net.caseif.beret.wrapper.MethodInfo;
 import net.caseif.beret.Opcode;
 import net.caseif.beret.Util;
 

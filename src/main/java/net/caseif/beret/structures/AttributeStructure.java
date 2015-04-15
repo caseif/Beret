@@ -28,7 +28,7 @@
  */
 package net.caseif.beret.structures;
 
-import net.caseif.beret.ClassInfo;
+import net.caseif.beret.wrapper.ClassInfo;
 
 /**
  * Represents a structure containing an attribute (a name and raw byte data).
