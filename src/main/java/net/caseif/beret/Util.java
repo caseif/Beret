@@ -30,6 +30,11 @@ package net.caseif.beret;
 
 import java.nio.charset.Charset;
 
+/**
+ * A basic utility class.
+ *
+ * @author Max Roncacé
+ */
 public class Util {
 
 	public static int bytesToInt(byte b1, byte b2, byte b3, byte b4) {

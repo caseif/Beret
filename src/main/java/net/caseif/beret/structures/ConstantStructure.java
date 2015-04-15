@@ -31,6 +31,11 @@ package net.caseif.beret.structures;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Represents a structure containing a constant value.
+ *
+ * @author Max Roncacé
+ */
 public class ConstantStructure {
 
 	private boolean isInfoSet = false;

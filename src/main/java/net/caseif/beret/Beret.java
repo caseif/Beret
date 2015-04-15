@@ -32,6 +32,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Beret Extraordinary Reverse Engineering Toolkit.
@@ -43,10 +46,17 @@ public class Beret {
 
 	public static void main(String[] args) {
 		if (args.length < 2) {
-			System.out.println("Usage: Beret.jar <class file> <output file>");
+			printUsage();
 			System.exit(0);
 		}
-		File input = new File(args[0]);
+		String action = args[0];
+		List<String> valid = Arrays.asList("dump", "decompile");
+		if (!valid.contains(action.toLowerCase())) {
+			System.err.println("Invalid command!");
+			printUsage();
+			System.exit(1);
+		}
+		File input = new File(args[1]);
 		if (!input.exists()) {
 			System.err.println("Invalid input file!");
 			System.exit(1);
@@ -60,15 +70,32 @@ public class Beret {
 			System.err.println("Invalid input file!");
 			System.exit(1);
 		}
-		File output = new File(args[1]);
+		OutputStream os;
 		try {
-			System.out.println("Writing to " + output.getAbsolutePath() + "...");
-			cf.writeOut(new FileOutputStream(output));
+			if (args.length > 2) {
+				File output = new File(args[1]);
+				System.out.println("Writing to " + output.getAbsolutePath() + "...");
+				os = new FileOutputStream(output);
+			} else {
+				os = System.out;
+			}
+			if (action.equalsIgnoreCase("dump")) {
+				cf.dump(os);
+			} else if (action.equalsIgnoreCase("decompile")) {
+				System.err.println("Not yet implemented!");
+			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			System.err.println("Failed to write to output file!");
+			System.err.println("Failed to write to output stream!");
 			System.exit(1);
 		}
+	}
+
+	public static void printUsage() {
+		System.out.println("Usage: Beret.jar <command> <class file> [<output file>]");
+		System.out.println("Available commands:");
+		System.out.println("    dump - Dumps info about a class in an arbitrary format");
+		System.out.println("    decompile - Decompiles a class into its original source code");
 	}
 
 }

@@ -1,7 +1,7 @@
 /*
  * New BSD License (BSD-new)
  *
- * Copyright (c) 2015 Maxim Roncac�
+ * Copyright (c) 2015 Maxim Roncacé
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,11 @@ package net.caseif.beret;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Represents a flag containing one or more access modifiers.
+ *
+ * @author Max Roncacé
+ */
 public final class AccessFlag {
 
 	private final AccessTarget target;
