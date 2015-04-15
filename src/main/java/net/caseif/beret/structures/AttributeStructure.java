@@ -1,16 +1,31 @@
 package net.caseif.beret.structures;
 
+import net.caseif.beret.ClassInfo;
+import net.caseif.beret.MethodInfo;
+
 public class AttributeStructure {
 
+	private ClassInfo parent;
 	private String name;
 	private byte[] info;
 
 	/**
-	 * Loads an {@link AttributeStructure}
+	 * Loads an {@link AttributeStructure}.
+	 *
+	 * @param parent The parent {@link ClassInfo} instance
 	 */
-	public AttributeStructure(String name, byte[] info) {
+	public AttributeStructure(ClassInfo parent, String name, byte[] info) {
+		this.parent = parent;
 		this.name = name;
 		this.info = info;
+	}
+
+	/**
+	 * Returns the parent {@link ClassInfo} instance.
+	 * @return The parent {@link ClassInfo} instance
+	 */
+	public ClassInfo getParent() {
+		return this.parent;
 	}
 
 	/**

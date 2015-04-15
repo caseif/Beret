@@ -8,6 +8,7 @@ import net.caseif.beret.structures.ConstantStructure;
  */
 public class FieldInfo {
 
+	private ClassInfo parent;
 	private AccessFlag access;
 	private String name;
 	private String descriptor;
@@ -22,12 +23,14 @@ public class FieldInfo {
 	 *                                  invalid data
 	 */
 	public FieldInfo(ClassInfo parent, byte[] info) throws IllegalArgumentException {
+		this.parent = parent;
+
 		// get the access flag
 		access = new AccessFlag(AccessFlag.AccessTarget.FIELD, info[0], info[1]);
 
 		// get the name from the provided pointer
 		int namePointer = Util.bytesToUshort(info[2], info[3]);
-		ConstantStructure nameStruct = parent.constantPool[namePointer - 1];
+		ConstantStructure nameStruct = parent.getConstantPool()[namePointer - 1];
 		if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 			throw new IllegalArgumentException("Name index does not point to a UTF-8 structure");
 		}
@@ -35,7 +38,7 @@ public class FieldInfo {
 
 		// get the descriptor from the provided pointer
 		int descPointer = Util.bytesToUshort(info[4], info[5]);
-		ConstantStructure descStruct = parent.constantPool[descPointer - 1];
+		ConstantStructure descStruct = parent.getConstantPool()[descPointer - 1];
 		if (descStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 			throw new IllegalArgumentException("Descriptor index does not point to a UTF-8 structure");
 		}
@@ -50,7 +53,7 @@ public class FieldInfo {
 		int offset = 8;
 		for (int i = 0; i < attrSize; i++) {
 			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			ConstantStructure nameStruct = parent.constantPool[namePointer - 1];
+			ConstantStructure nameStruct = parent.getConstantPool()[namePointer - 1];
 			if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 				throw new IllegalArgumentException("Attribute name index does not point to a UTF-8 structure");
 			}
@@ -62,8 +65,17 @@ public class FieldInfo {
 			byte[] finalInfo = new byte[infoLength];
 			System.arraycopy(info, offset, finalInfo, 0, infoLength);
 			offset += infoLength;
-			attributes[i] = new AttributeStructure(name, finalInfo);
+			attributes[i] = new AttributeStructure(getParent(), name, finalInfo);
 		}
+	}
+
+	/**
+	 * Gets the parent {@link ClassInfo} instance.
+	 *
+	 * @return The parent {@link ClassInfo} instance
+	 */
+	public ClassInfo getParent() {
+		return this.parent;
 	}
 
 	/**
