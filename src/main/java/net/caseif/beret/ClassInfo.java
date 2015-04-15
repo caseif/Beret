@@ -44,7 +44,9 @@ public class ClassInfo {
 
 	private static final int CONSTANT_POOL_START = 10; // this will never change
 	private static int INTERFACE_POOL_START;
+	private static int FIELD_POOL_START;
 	private static int METHOD_POOL_START;
+	private static int ATTRIBUTE_POOL_START;
 
 	private final byte[] bytes;
 
@@ -60,10 +62,9 @@ public class ClassInfo {
 	private String superName;
 
 	private String[] interfacePool;
-
 	private FieldInfo[] fields;
-
 	private MethodInfo[] methods;
+	private AttributeStructure[] attributes;
 
 	/**
 	 * Loads a class file from the given {@link InputStream}.
@@ -94,6 +95,7 @@ public class ClassInfo {
 		loadInterfaces();
 		loadFields();
 		loadMethods();
+		loadAttributes();
 	}
 
 	/**
@@ -244,10 +246,11 @@ public class ClassInfo {
 			}
 			offset += 2; // move to the next pointer
 		}
+		FIELD_POOL_START = INTERFACE_POOL_START + 2 + interfacePool.length * 2;
 	}
 
 	public void loadFields() {
-		int offset = INTERFACE_POOL_START + 2 + interfacePool.length * 2;
+		int offset = FIELD_POOL_START;
 		int fieldCount = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
 		fields = new FieldInfo[fieldCount];
 		offset += 2;
@@ -278,6 +281,34 @@ public class ClassInfo {
 				offset += 6; // attribute name and length
 				offset += attr.getInfo().length;
 			}
+		}
+		ATTRIBUTE_POOL_START = offset;
+	}
+
+	private void loadAttributes() {
+		int offset = ATTRIBUTE_POOL_START;
+		int attrSize = Util.bytesToUshort(getBytes()[offset], getBytes()[offset + 1]);
+		offset += 2;
+		attributes = new AttributeStructure[attrSize];
+		for (int i = 0; i < attrSize; i++) {
+			int namePointer = Util.bytesToUshort(getBytes()[offset], getBytes()[offset + 1]);
+			ConstantStructure nameStruct = getConstantPool()[namePointer - 1];
+			if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
+				throw new IllegalArgumentException("Attribute name index does not point to a UTF-8 structure");
+			}
+			String name = Util.asUtf8(nameStruct.getInfo());
+			offset += 2;
+			//TODO: add support for long arrays
+			long infoLength = Util.bytesToUint(getBytes()[offset], getBytes()[offset + 1],
+					getBytes()[offset + 2], getBytes()[offset + 3]);
+			if (infoLength > Integer.MAX_VALUE) {
+				throw new UnsupportedOperationException("Attribute is too long");
+			}
+			offset += 4;
+			byte[] finalInfo = new byte[(int)infoLength];
+			System.arraycopy(getBytes(), offset, finalInfo, 0, (int)infoLength);
+			offset += infoLength;
+			attributes[i] = new AttributeStructure(this, name, finalInfo);
 		}
 	}
 
@@ -378,6 +409,13 @@ public class ClassInfo {
 				}
 			}
 		}
+
+		sb.append("Attributes:").append("\n");
+		for (AttributeStructure attr : attributes) {
+			sb.append("  ").append(attr.getName()).append(": ").append(Util.bytesToHex(attr.getInfo()));
+		}
+
+		sb.append("\n"); // for good measure
 
 		stream.write(sb.toString().getBytes(Charset.forName("UTF-8")));
 		stream.flush();
