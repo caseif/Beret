@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -81,7 +82,8 @@ public class Beret {
 				cf.dump(os);
 			}
 			else if (action.equalsIgnoreCase("decompile")) {
-				System.err.println("Not yet implemented!");
+				DecompileAgent da = new DecompileAgent(cf);
+				os.write(da.decompile().getBytes(Charset.forName("UTF-8")));
 			}
 		}
 		catch (IOException ex) {
