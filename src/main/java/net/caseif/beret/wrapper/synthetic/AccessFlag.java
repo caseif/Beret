@@ -109,21 +109,27 @@ public final class AccessFlag {
 	public enum ClassFlag {
 
 		//TODO: document
-		ACC_PUBLIC((byte)0x01, false),
-		ACC_FINAL((byte)0x10, false),
-		ACC_SUPER((byte)0x20, false),
-		ACC_INTERFACE((byte)0x02, true),
-		ACC_ABSTRACT((byte)0x04, true),
-		ACC_SYNTHETIC((byte)0x10, true),
-		ACC_ANNOTATION((byte)0x20, true),
-		ACC_ENUM((byte)0x40, true);
+		ACC_PUBLIC((byte)0x01, false, true),
+		ACC_ABSTRACT((byte)0x04, true, true),
+		ACC_FINAL((byte)0x10, false, true),
+		ACC_INTERFACE((byte)0x02, true, true),
+		ACC_ENUM((byte)0x40, true, true),
+		ACC_SUPER((byte)0x20, false, false),
+		ACC_SYNTHETIC((byte)0x10, true, false),
+		ACC_ANNOTATION((byte)0x20, true, false);
 
 		private byte mask;
 		private boolean isFirst;
+		private boolean inSource;
 
-		ClassFlag(byte mask, boolean isFirst) {
+		ClassFlag(byte mask, boolean isFirst, boolean inSource) {
 			this.mask = mask;
 			this.isFirst = isFirst;
+			this.inSource = inSource;
+		}
+
+		public boolean isPresentInSource() {
+			return inSource;
 		}
 
 		@Override
@@ -139,22 +145,28 @@ public final class AccessFlag {
 	public enum FieldFlag {
 
 		//TODO: document
-		ACC_PUBLIC((byte)0x01, false),
-		ACC_PRIVATE((byte)0x02, false),
-		ACC_PROTECTED((byte)0x04, false),
-		ACC_STATIC((byte)0x08, false),
-		ACC_FINAL((byte)0x10, false),
-		ACC_VOLATILE((byte)0x40, false),
-		ACC_TRANSIENT((byte)0x80, false),
-		ACC_SYNTHETIC((byte)0x10, true),
-		ACC_ENUM((byte)0x40, true);
+		ACC_PUBLIC((byte)0x01, false, true),
+		ACC_PRIVATE((byte)0x02, false, true),
+		ACC_PROTECTED((byte)0x04, false, true),
+		ACC_STATIC((byte)0x08, false, true),
+		ACC_VOLATILE((byte)0x40, false, true),
+		ACC_TRANSIENT((byte)0x80, false, true),
+		ACC_FINAL((byte)0x10, false, true),
+		ACC_ENUM((byte)0x40, true, false),
+		ACC_SYNTHETIC((byte)0x10, true, false);
 
 		private byte mask;
 		private boolean isFirst;
+		private boolean inSource;
 
-		FieldFlag(byte mask, boolean isFirst) {
+		FieldFlag(byte mask, boolean isFirst, boolean inSource) {
 			this.mask = mask;
 			this.isFirst = isFirst;
+			this.inSource = inSource;
+		}
+
+		public boolean isPresentInSource() {
+			return inSource;
 		}
 
 		@Override
@@ -170,25 +182,31 @@ public final class AccessFlag {
 	public enum MethodFlag {
 
 		//TODO: document
-		ACC_PUBLIC((byte)0x01, false),
-		ACC_PRIVATE((byte)0x02, false),
-		ACC_PROTECTED((byte)0x04, false),
-		ACC_STATIC((byte)0x08, false),
-		ACC_FINAL((byte)0x10, false),
-		ACC_SYNCHRONIZED((byte)0x20, false),
-		ACC_BRIDGE((byte)0x40, false),
-		ACC_VARARGS((byte)0x80, false),
-		ACC_NATIVE((byte)0x01, true),
-		ACC_ABSTRACT((byte)0x04, true),
-		ACC_STRICT((byte)0x08, true),
-		ACC_SYNTHETIC((byte)0x10, true);
+		ACC_PUBLIC((byte)0x01, false, true),
+		ACC_PRIVATE((byte)0x02, false, true),
+		ACC_PROTECTED((byte)0x04, false, true),
+		ACC_STATIC((byte)0x08, false, true),
+		ACC_ABSTRACT((byte)0x04, true, true),
+		ACC_SYNCHRONIZED((byte)0x20, false, true),
+		ACC_FINAL((byte)0x10, false, true),
+		ACC_STRICT((byte)0x08, true, true),
+		ACC_NATIVE((byte)0x01, true, true),
+		ACC_BRIDGE((byte)0x40, false, false),
+		ACC_VARARGS((byte)0x80, false, false),
+		ACC_SYNTHETIC((byte)0x10, true, false);
 
 		private byte mask;
 		private boolean isFirst;
+		private boolean inSource;
 
-		MethodFlag(byte mask, boolean isFirst) {
+		MethodFlag(byte mask, boolean isFirst, boolean inSource) {
 			this.mask = mask;
 			this.isFirst = isFirst;
+			this.inSource = inSource;
+		}
+
+		public boolean isPresentInSource() {
+			return inSource;
 		}
 
 		@Override

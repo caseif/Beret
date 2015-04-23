@@ -107,6 +107,51 @@ public class ClassInfo {
 	}
 
 	/**
+	 * Gets the qualified name of this class.
+	 *
+	 * @return The qualified name of this class
+	 */
+	public String getName() {
+		return className;
+	}
+
+	/**
+	 * Gets the qualified name of this class's superclass.
+	 *
+	 * @return The qualified name of this class's superclass
+	 */
+	public String getSuperName() {
+		return superName;
+	}
+
+	/**
+	 * Gets this class's access modifiers.
+	 *
+	 * @return This class's access modifiers
+	 */
+	public AccessFlag getAccessModifiers() {
+		return accessFlag;
+	}
+
+	/**
+	 * Gets this class's major version.
+	 *
+	 * @return This class's major version
+	 */
+	public int getMajorVersion() {
+		return majorVersion;
+	}
+
+	/**
+	 * Gets this class's major version.
+	 *
+	 * @return This class's major version
+	 */
+	public int getMinorVersion() {
+		return minorVersion;
+	}
+
+	/**
 	 * Gets the bytes comprising this class.
 	 *
 	 * @return The bytes comprising this class

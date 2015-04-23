@@ -80,8 +80,7 @@ public class Beret {
 			}
 			if (action.equalsIgnoreCase("dump")) {
 				cf.dump(os);
-			}
-			else if (action.equalsIgnoreCase("decompile")) {
+			} else if (action.equalsIgnoreCase("decompile")) {
 				DecompileAgent da = new DecompileAgent(cf);
 				os.write(da.decompile().getBytes(Charset.forName("UTF-8")));
 			}
