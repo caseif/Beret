@@ -35,6 +35,14 @@ import net.caseif.beret.wrapper.MethodInfo;
 import net.caseif.beret.Opcode;
 import net.caseif.beret.Util;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
+
 /**
  * Represents a Code attribute in a method.
  *
@@ -70,18 +78,27 @@ public class CodeStructure extends AttributeStructure {
 		if (codeSize > Integer.MAX_VALUE) {
 			throw new UnsupportedOperationException("Code attribute is too long");
 		}
-		code = new Instruction[(int)codeSize];
+		LinkedList<Instruction> instrs = new LinkedList<>();
 		for (int i = 0; i < codeSize; i++) {
 			Opcode opcode = Opcode.fromByte(info[i + HEADER_LENGTH]);
+			if (opcode == null) {
+				System.err.println("Unrecognized opcode 0x" + Util.bytesToHex(new byte[]{info[i + HEADER_LENGTH]})
+						+ " at offset " + i);
+				instrs.add(new Instruction(Opcode.UNKNOWN));
+				continue;
+			}
 			int extra = opcode.getAdditionalBytes();
 			if (extra == -1) {
 				throw new UnsupportedOperationException("Unsupported opcode: " + opcode.toString()); //TODO
 			}
 			byte[] extraBytes = new byte[extra];
-			System.arraycopy(info, i + HEADER_LENGTH, extraBytes, 0, extra);
-			code[i] = new Instruction(opcode, extraBytes);
+			System.arraycopy(info, i + HEADER_LENGTH + 1, extraBytes, 0, extra);
+			i += extra;
+			instrs.add(new Instruction(opcode, extraBytes));
 		}
-		int offset = HEADER_LENGTH + code.length;
+		code = new Instruction[instrs.size()];
+		instrs.toArray(code);
+		int offset = (int)(HEADER_LENGTH + codeSize);
 		int exceptionTableLength = Util.bytesToUshort(info[offset], info[offset + 1]);
 		offset += 2;
 		exceptionHandlers = new ExceptionHandler[exceptionTableLength];

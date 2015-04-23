@@ -30,7 +30,6 @@ package net.caseif.beret;
 
 import net.caseif.beret.wrapper.ClassInfo;
 import net.caseif.beret.wrapper.FieldInfo;
-import net.caseif.beret.wrapper.MethodInfo;
 import net.caseif.beret.wrapper.synthetic.AccessFlag;
 
 import java.util.ArrayList;

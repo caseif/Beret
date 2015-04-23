@@ -61,7 +61,7 @@ public class Beret {
 		}
 		File input = new File(args[1]);
 		if (!input.exists()) {
-			System.err.println("Invalid input file!");
+			System.err.println("Input file does not exist!");
 			System.exit(1);
 		}
 		System.out.println("Reading from " + input.getAbsolutePath() + "...");

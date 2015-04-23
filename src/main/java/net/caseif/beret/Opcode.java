@@ -1370,7 +1370,11 @@ public enum Opcode {
 	/**
 	 * TODO: research.
 	 */
-	WIDE(0xC4, -1);
+	WIDE(0xC4, -1),
+	/**
+	 * Unknown opcode.
+	 */
+	UNKNOWN(256, 0);
 
 	private static Map<Byte, Opcode> codes;
 
