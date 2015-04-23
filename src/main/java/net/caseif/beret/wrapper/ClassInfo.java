@@ -152,6 +152,24 @@ public class ClassInfo {
 	}
 
 	/**
+	 * Gets this class's field pool.
+	 *
+	 * @return This class's field pool
+	 */
+	public FieldInfo[] getFields() {
+		return fields;
+	}
+
+	/**
+	 * Gets this class's field pool.
+	 *
+	 * @return This class's field pool
+	 */
+	public MethodInfo[] getMethods() {
+		return methods;
+	}
+
+	/**
 	 * Gets the bytes comprising this class.
 	 *
 	 * @return The bytes comprising this class

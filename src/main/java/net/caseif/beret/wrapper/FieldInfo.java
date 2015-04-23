@@ -28,6 +28,7 @@
  */
 package net.caseif.beret.wrapper;
 
+import net.caseif.beret.Descriptor;
 import net.caseif.beret.wrapper.synthetic.AccessFlag;
 import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
@@ -43,7 +44,7 @@ public class FieldInfo {
 	private ClassInfo parent;
 	private AccessFlag access;
 	private String name;
-	private String descriptor;
+	private Descriptor descriptor;
 	private AttributeStructure[] attributes;
 
 	/**
@@ -74,7 +75,7 @@ public class FieldInfo {
 		if (descStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 			throw new IllegalArgumentException("Descriptor index does not point to a UTF-8 structure");
 		}
-		descriptor = Util.asUtf8(descStruct.getInfo());
+		descriptor = new Descriptor(Util.asUtf8(descStruct.getInfo()));
 
 		loadAttributes(parent, info);
 	}
@@ -133,7 +134,7 @@ public class FieldInfo {
 	 *
 	 * @return The descriptor associated with this {@link FieldInfo} instance
 	 */
-	public String getDescriptor() {
+	public Descriptor getDescriptor() {
 		return this.descriptor;
 	}
 
