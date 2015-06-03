@@ -120,7 +120,7 @@ public class DecompileAgent {
                 imports.add(f.getDescriptor().getRequiredImport());
             }
             StringBuilder sb = new StringBuilder();
-            for (AccessFlag.MethodFlag flag : AccessFlag.MethodFlag.values()) {
+            for (AccessFlag.FieldFlag flag : AccessFlag.FieldFlag.values()) {
                 if (flag.isPresentInSource() && f.getAccess().getFlags().contains(flag)) {
                     sb.append(flag.toString()).append(" ");
                 }
