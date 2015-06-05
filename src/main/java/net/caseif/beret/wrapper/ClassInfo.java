@@ -28,6 +28,9 @@
  */
 package net.caseif.beret.wrapper;
 
+import static net.caseif.beret.Util.setTabSize;
+import static net.caseif.beret.Util.tab;
+
 import net.caseif.beret.wrapper.synthetic.AccessFlag;
 import net.caseif.beret.wrapper.synthetic.Instruction;
 import net.caseif.beret.Util;
@@ -170,6 +173,15 @@ public class ClassInfo {
 	}
 
 	/**
+	 * Gets this class's attributes.
+	 *
+	 * @return This class's attributes.
+	 */
+	public AttributeStructure[] getAttributes() {
+		return attributes;
+	}
+
+	/**
 	 * Gets the bytes comprising this class.
 	 *
 	 * @return The bytes comprising this class
@@ -265,7 +277,8 @@ public class ClassInfo {
 		int classInfoPointer = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
 		ConstantStructure classInfo = constantPool[classInfoPointer - 1];
 		if (classInfo.getType() != ConstantStructure.StructureType.CLASS) {
-			throw new IllegalStateException("Class info pointer does not point to a class info structure");
+			throw new IllegalStateException("Class info pointer does not point to a class info structure: found "
+					+ classInfo.getType());
 		}
 		int classNamePointer = Util.bytesToUshort(classInfo.getInfo()[0], classInfo.getInfo()[1]);
 		ConstantStructure classNameStruct = constantPool[classNamePointer - 1];
@@ -361,11 +374,7 @@ public class ClassInfo {
 		attributes = new AttributeStructure[attrSize];
 		for (int i = 0; i < attrSize; i++) {
 			int namePointer = Util.bytesToUshort(getBytes()[offset], getBytes()[offset + 1]);
-			ConstantStructure nameStruct = getConstantPool()[namePointer - 1];
-			if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-				throw new IllegalArgumentException("Attribute name index does not point to a UTF-8 structure");
-			}
-			String name = Util.asUtf8(nameStruct.getInfo());
+			String name = getStringFromPool(namePointer);
 			offset += 2;
 			//TODO: add support for long arrays
 			long infoLength = Util.bytesToUint(getBytes()[offset], getBytes()[offset + 1],
@@ -400,7 +409,7 @@ public class ClassInfo {
 		sb.append("Constant pool dump:").append("\n");
 		int i = 0;
 		for (ConstantStructure cs : constantPool) {
-			sb.append("  ");
+			sb.append(tab(1));
 			sb.append(i + 1).append(": ");
 			sb.append(cs.getType().toString()).append(" - ");
 			if (cs.getType() == ConstantStructure.StructureType.UTF_8) {
@@ -423,23 +432,24 @@ public class ClassInfo {
 		sb.append("\n\n");
 		sb.append("Interfaces:").append("\n");
 		for (String s : interfacePool) {
-			sb.append("  ").append(s).append("\n");
+			sb.append(tab(1)).append(s).append("\n");
 		}
 
 		sb.append("\n");
 		sb.append("Fields:").append("\n");
 		for (FieldInfo f : fields) {
-			sb.append("  ").append(f.getName()).append(":").append("\n");
-			sb.append("    ").append("Access flags: ");
+			setTabSize(2);
+			sb.append(tab(1)).append(f.getName()).append(":").append("\n");
+			sb.append(tab(2)).append("Access flags: ");
 			assert f.getAccess().getTargetType() == AccessFlag.AccessTarget.FIELD;
 			for (AccessFlag.FieldFlag flag : (Set<AccessFlag.FieldFlag>)f.getAccess().getFlags()) {
 				sb.append(flag.toString()).append(" ");
 			}
 			sb.deleteCharAt(sb.length() - 1).append("\n");
-			sb.append("    ").append("Descriptor: ").append(f.getDescriptor()).append("\n");
-			sb.append("    ").append("Attributes:").append("\n");
+			sb.append(tab(2)).append("Descriptor: ").append(f.getDescriptor()).append("\n");
+			sb.append(tab(2)).append("Attributes:").append("\n");
 			for (AttributeStructure attr : f.getAttributes()) {
-				sb.append("      ").append(attr.getName()).append(": ")
+				sb.append(tab(3)).append(attr.getName()).append(": ")
 						.append(Util.bytesToHex(attr.getInfo())).append("\n");
 			}
 		}
@@ -447,29 +457,29 @@ public class ClassInfo {
 		sb.append("\n");
 		sb.append("Methods:").append("\n");
 		for (MethodInfo f : methods) {
-			sb.append("  ").append(f.getName()).append(":").append("\n");
-			sb.append("    ").append("Access flags: ");
+			sb.append(tab(1)).append(f.getName()).append(":").append("\n");
+			sb.append(tab(2)).append("Access flags: ");
 			assert f.getAccess().getTargetType() == AccessFlag.AccessTarget.METHOD;
 			for (AccessFlag.MethodFlag flag : (Set<AccessFlag.MethodFlag>)f.getAccess().getFlags()) {
 				sb.append(flag.toString()).append(" ");
 			}
 			sb.deleteCharAt(sb.length() - 1).append("\n");
-			sb.append("    ").append("Descriptor: ").append(f.getDescriptor()).append("\n");
-			sb.append("    ").append("Attributes:").append("\n");
+			sb.append(tab(2)).append("Descriptor: ").append(f.getDescriptor()).append("\n");
+			sb.append(tab(2)).append("Attributes:").append("\n");
 			for (AttributeStructure attr : f.getAttributes()) {
-				sb.append("      ").append(attr.getName()).append(":");
+				sb.append(tab(3)).append(attr.getName()).append(":");
 				if (attr instanceof CodeStructure) {
 					CodeStructure cs = (CodeStructure)attr;
-					sb.append("\n").append("        ")
+					sb.append("\n").append(tab(4))
 							.append("Max stack size: ").append(cs.getMaxStackSize()).append("\n");
-					sb.append("        ").append("Max local variables: ").append(cs.getMaxLocalSize()).append("\n");
-					sb.append("        ").append("Exception handlers: ").append(cs.getExceptionHandlers().length)
+					sb.append(tab(4)).append("Max local variables: ").append(cs.getMaxLocalSize()).append("\n");
+					sb.append(tab(4)).append("Exception handlers: ").append(cs.getExceptionHandlers().length)
 							.append(" (not dumped)").append("\n");
-					sb.append("        ").append("Attributes: ").append(cs.getAttributes().length)
+					sb.append(tab(4)).append("Attributes: ").append(cs.getAttributes().length)
 							.append(" (not dumped)").append("\n");
-					sb.append("        ").append("Body:").append("\n");
+					sb.append(tab(4)).append("Body:").append("\n");
 					for (Instruction instr : cs.getCode()) {
-						sb.append("          ").append(instr.getOpcode().toString().toLowerCase())
+						sb.append(tab(5)).append(instr.getOpcode().toString().toLowerCase())
 								.append(instr.getExtraBytes().length > 0 ? " " : "")
 								.append(Util.bytesToHex(instr.getExtraBytes())).append("\n");
 					}
@@ -481,13 +491,41 @@ public class ClassInfo {
 
 		sb.append("Attributes:").append("\n");
 		for (AttributeStructure attr : attributes) {
-			sb.append("  ").append(attr.getName()).append(": ").append(Util.bytesToHex(attr.getInfo()));
+			sb.append(tab(1)).append(attr.getName()).append(": ").append(Util.bytesToHex(attr.getInfo()));
 		}
 
 		sb.append("\n"); // for good measure
 
 		stream.write(sb.toString().getBytes(Charset.forName("UTF-8")));
 		stream.flush();
+	}
+
+	public ConstantStructure getFromPool(int offset) {
+		return getConstantPool()[offset - 1];
+	}
+
+	public ConstantStructure getFromPool(byte[] offset) {
+		if (offset.length == 2) {
+			return getFromPool(Util.bytesToUshort(offset));
+		} else {
+			throw new IllegalArgumentException("Bad offset length");
+		}
+	}
+
+	public String getStringFromPool(int offset) {
+		ConstantStructure cs = getFromPool(offset);
+		if (cs.getType() != ConstantStructure.StructureType.UTF_8) {
+			throw new IllegalArgumentException("Constant structure is not of type UTF-8");
+		}
+		return Util.asUtf8(cs.getInfo());
+	}
+
+	public String getStringFromPool(byte[] offset) {
+		if (offset.length == 2) {
+			return getStringFromPool(Util.bytesToUshort(offset));
+		} else {
+			throw new IllegalArgumentException("Bad offset length");
+		}
 	}
 
 }

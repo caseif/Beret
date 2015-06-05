@@ -28,6 +28,8 @@
  */
 package net.caseif.beret;
 
+import net.caseif.beret.structures.AttributeStructure;
+
 import java.nio.charset.Charset;
 
 /**
@@ -37,20 +39,66 @@ import java.nio.charset.Charset;
  */
 public class Util {
 
+	private static String tab = "    "; // default tab size of 4
+
+	public static void setTabSize(int indent) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < indent; i++) {
+			sb.append(' ');
+		}
+		tab = sb.toString();
+	}
+
+	public static String tab(int num) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < num; i++) {
+			sb.append(tab);
+		}
+		return sb.toString();
+	}
+
 	public static int bytesToInt(byte b1, byte b2, byte b3, byte b4) {
 		return (int)bytesToUint(b1, b2, b3, b4);
 	}
 
+	public static int bytesToInt(byte[] bytes) {
+		if (bytes.length != 4) {
+			throw new IllegalArgumentException("Bad byte array length");
+		}
+		return bytesToInt(bytes[0], bytes[1], bytes[2], bytes[3]);
+	}
+
 	public static long bytesToUint(byte b1, byte b2, byte b3, byte b4) {
-		return (b1 << 24) + (b2 << 16) + (b3 << 8) + b4;
+		return ((b1 & 0xFF) << 24) + ((b2 & 0xFF) << 16) + ((b3 & 0xFF) << 8) + (b4 & 0xFF);
+	}
+
+	public static long bytesToUint(byte[] bytes) {
+		if (bytes.length != 4) {
+			throw new IllegalArgumentException("Bad byte array length");
+		}
+		return bytesToUint(bytes[0], bytes[1], bytes[2], bytes[3]);
 	}
 
 	public static short bytesToShort(byte b1, byte b2) {
 		return (short)bytesToUshort(b1, b2);
 	}
 
+	public static short bytesToShort(byte[] bytes) {
+		if (bytes.length != 2) {
+			throw new IllegalArgumentException("Bad byte array length");
+		}
+		return bytesToShort(bytes[0], bytes[1]);
+	}
+
 	public static int bytesToUshort(byte b1, byte b2) {
-		return (b1 << 8) + b2;
+		return ((b1 & 0xFF) << 8) + (b2 & 0xFF);
+	}
+
+	public static int bytesToUshort(byte[] bytes) {
+		if (bytes.length != 2) {
+			throw new IllegalArgumentException("Bad byte array length");
+		}
+		return bytesToUshort(bytes[0], bytes[1]);
 	}
 
 	public static String bytesToHex(byte[] bytes) {
@@ -63,6 +111,15 @@ public class Util {
 
 	public static String asUtf8(byte[] bytes) {
 		return new String(bytes, Charset.forName("UTF-8"));
+	}
+
+	public static AttributeStructure getAttrFromName(AttributeStructure[] attrs, String name) {
+		for (AttributeStructure as : attrs) {
+			if (as.getName().equals(name)) {
+				return as;
+			}
+		}
+		return null;
 	}
 
 }

@@ -28,7 +28,7 @@
  */
 package net.caseif.beret.wrapper;
 
-import net.caseif.beret.Descriptor;
+import net.caseif.beret.TypeDescriptor;
 import net.caseif.beret.wrapper.synthetic.AccessFlag;
 import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
@@ -44,7 +44,7 @@ public class FieldInfo {
 	private ClassInfo parent;
 	private AccessFlag access;
 	private String name;
-	private Descriptor descriptor;
+	private TypeDescriptor descriptor;
 	private AttributeStructure[] attributes;
 
 	/**
@@ -63,19 +63,11 @@ public class FieldInfo {
 
 		// get the name from the provided pointer
 		int namePointer = Util.bytesToUshort(info[2], info[3]);
-		ConstantStructure nameStruct = parent.getConstantPool()[namePointer - 1];
-		if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-			throw new IllegalArgumentException("Name index does not point to a UTF-8 structure");
-		}
-		name = Util.asUtf8(nameStruct.getInfo());
+		name = parent.getStringFromPool(namePointer);
 
 		// get the descriptor from the provided pointer
 		int descPointer = Util.bytesToUshort(info[4], info[5]);
-		ConstantStructure descStruct = parent.getConstantPool()[descPointer - 1];
-		if (descStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-			throw new IllegalArgumentException("Descriptor index does not point to a UTF-8 structure");
-		}
-		descriptor = new Descriptor(Util.asUtf8(descStruct.getInfo()));
+		descriptor = new TypeDescriptor(parent.getStringFromPool(descPointer));
 
 		loadAttributes(parent, info);
 	}
@@ -86,11 +78,7 @@ public class FieldInfo {
 		int offset = 8;
 		for (int i = 0; i < attrSize; i++) {
 			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			ConstantStructure nameStruct = parent.getConstantPool()[namePointer - 1];
-			if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-				throw new IllegalArgumentException("Attribute name index does not point to a UTF-8 structure");
-			}
-			String name = Util.asUtf8(nameStruct.getInfo());
+			String name = parent.getStringFromPool(namePointer);
 			offset += 2;
 			int infoLength = Util.bytesToInt(info[offset], info[offset + 1],
 					info[offset + 2], info[offset + 3]);
@@ -134,7 +122,7 @@ public class FieldInfo {
 	 *
 	 * @return The descriptor associated with this {@link FieldInfo} instance
 	 */
-	public Descriptor getDescriptor() {
+	public TypeDescriptor getDescriptor() {
 		return this.descriptor;
 	}
 

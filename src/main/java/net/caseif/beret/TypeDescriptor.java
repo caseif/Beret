@@ -31,7 +31,7 @@ package net.caseif.beret;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Descriptor {
+public class TypeDescriptor {
 
 	private static Map<String, String> primTypes = new HashMap<String, String>();
 
@@ -50,6 +50,7 @@ public class Descriptor {
 		primTypes.put("I", "int");
 		primTypes.put("J", "long");
 		primTypes.put("S", "short");
+		primTypes.put("V", "void");
 		primTypes.put("Z", "boolean");
 
 	}
@@ -59,7 +60,7 @@ public class Descriptor {
 	 *
 	 * @param str The string to construct a descriptor from
 	 */
-	public Descriptor(String str) {
+	public TypeDescriptor(String str) {
 		handle = str;
 		arrayDimensions = str.length() - str.replaceAll("\\[", "").length();
 		str = str.replaceAll("\\[", "");
@@ -88,7 +89,7 @@ public class Descriptor {
 		StringBuilder sb = new StringBuilder();
 		sb.append(canonicalName);
 		for (int i = 0; i < arrayDimensions; i++) {
-			sb.append("[");
+			sb.append("[]");
 		}
 		return sb.toString();
 	}

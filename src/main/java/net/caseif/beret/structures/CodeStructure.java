@@ -83,8 +83,8 @@ public class CodeStructure extends AttributeStructure {
 			Opcode opcode = Opcode.fromByte(info[i + HEADER_LENGTH]);
 			if (opcode == null) {
 				System.err.println("Unrecognized opcode 0x" + Util.bytesToHex(new byte[]{info[i + HEADER_LENGTH]})
-						+ " at offset " + i);
-				instrs.add(new Instruction(Opcode.UNKNOWN));
+						+ " at offset " + i + " for method " + parent.getName() + parent.getDescriptor());
+				instrs.add(new Instruction(Opcode.UNKNOWN, i));
 				continue;
 			}
 			int extra = opcode.getAdditionalBytes();
@@ -94,7 +94,7 @@ public class CodeStructure extends AttributeStructure {
 			byte[] extraBytes = new byte[extra];
 			System.arraycopy(info, i + HEADER_LENGTH + 1, extraBytes, 0, extra);
 			i += extra;
-			instrs.add(new Instruction(opcode, extraBytes));
+			instrs.add(new Instruction(opcode, i - extra, extraBytes));
 		}
 		code = new Instruction[instrs.size()];
 		instrs.toArray(code);
@@ -107,9 +107,8 @@ public class CodeStructure extends AttributeStructure {
 			int endIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
 			int handlerStartIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
 			int catchType = Util.bytesToUshort(info[offset], info[offset + 1]);
-			byte[] classRef = getParent().getConstantPool()[catchType].getInfo();
-			int catchTypeRef = Util.bytesToUshort(classRef[0], classRef[1]);
-			String catchTypeName = Util.asUtf8(getParent().getConstantPool()[catchTypeRef].getInfo());
+			byte[] classRef = getParent().getFromPool(catchType).getInfo();
+			String catchTypeName = getParent().getStringFromPool(classRef);
 			exceptionHandlers[i] = new ExceptionHandler(
 					method, startIndex, endIndex, handlerStartIndex, catchTypeName
 			);
@@ -120,11 +119,7 @@ public class CodeStructure extends AttributeStructure {
 		attributes = new AttributeStructure[attributeCount];
 		for (int i = 0; i < attributeCount; i++) {
 			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			ConstantStructure nameStruct = getParent().getConstantPool()[namePointer - 1];
-			if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-				throw new IllegalArgumentException("Attribute name index does not point to a UTF-8 structure");
-			}
-			String attrName = Util.asUtf8(nameStruct.getInfo());
+			String attrName = getParent().getStringFromPool(namePointer);
 			offset += 2;
 			//TODO: add support for long arrays
 			long infoLength = Util.bytesToUint(info[offset], info[offset + 1],

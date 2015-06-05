@@ -189,7 +189,7 @@ public enum Opcode {
 	 * <p>Accepts: <code>short index</code></p>
 	 * <p>Stack: <code>objectref -&gt; objectref</code></p>
 	 */
-	CHECKCAST(0xC, 2),
+	CHECKCAST(0xC0, 2),
 	/**
 	 * Converts a double to a float.
 	 *

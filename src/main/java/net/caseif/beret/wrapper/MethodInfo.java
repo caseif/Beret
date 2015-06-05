@@ -28,11 +28,13 @@
  */
 package net.caseif.beret.wrapper;
 
+import net.caseif.beret.TypeDescriptor;
 import net.caseif.beret.wrapper.synthetic.AccessFlag;
 import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
 import net.caseif.beret.structures.CodeStructure;
-import net.caseif.beret.structures.ConstantStructure;
+
+import java.util.ArrayList;
 
 /**
  * Contains information regarding a specific method.
@@ -45,6 +47,8 @@ public class MethodInfo {
 	private AccessFlag access;
 	private String name;
 	private String descriptor;
+	private TypeDescriptor[] params;
+	private TypeDescriptor returnType;
 	private AttributeStructure[] attributes;
 
 	/**
@@ -64,19 +68,28 @@ public class MethodInfo {
 
 		// get the name from the provided pointer
 		int namePointer = Util.bytesToUshort(info[2], info[3]);
-		ConstantStructure nameStruct = parent.getConstantPool()[namePointer - 1];
-		if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-			throw new IllegalArgumentException("Name index does not point to a UTF-8 structure");
-		}
-		name = Util.asUtf8(nameStruct.getInfo());
+		name = parent.getStringFromPool(namePointer);
 
 		// get the descriptor from the provided pointer
 		int descPointer = Util.bytesToUshort(info[4], info[5]);
-		ConstantStructure descStruct = parent.getConstantPool()[descPointer - 1];
-		if (descStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-			throw new IllegalArgumentException("Descriptor index does not point to a UTF-8 structure");
+		descriptor = parent.getStringFromPool(descPointer);
+		returnType = new TypeDescriptor(descriptor.substring(descriptor.lastIndexOf(')') + 1));
+		int start = 1;
+		ArrayList<TypeDescriptor> paramList = new ArrayList<>();
+		for (int i = start; i < descriptor.lastIndexOf(')'); i++) {
+			while (descriptor.charAt(i) == '[') {
+				++i; // increment until we're past the bit that defines array dimensions
+			}
+			if (descriptor.charAt(i) == 'L') {
+				while (descriptor.charAt(i) != ';') {
+					++i; // increment until we're past the class name
+				}
+			}
+			paramList.add(new TypeDescriptor(descriptor.substring(start, i + 1)));
+			start = i + 1;
 		}
-		descriptor = Util.asUtf8(descStruct.getInfo());
+		params = new TypeDescriptor[paramList.size()];
+		paramList.toArray(params);
 
 		loadAttributes(info);
 	}
@@ -87,11 +100,7 @@ public class MethodInfo {
 		int offset = 8;
 		for (int i = 0; i < attrSize; i++) {
 			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			ConstantStructure nameStruct = getParent().getConstantPool()[namePointer - 1];
-			if (nameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
-				throw new IllegalArgumentException("Attribute name index does not point to a UTF-8 structure");
-			}
-			String name = Util.asUtf8(nameStruct.getInfo());
+			String name = parent.getStringFromPool(namePointer);
 			offset += 2;
 			//TODO: add support for long arrays
 			long infoLength = Util.bytesToUint(info[offset], info[offset + 1],
@@ -145,6 +154,26 @@ public class MethodInfo {
 	 */
 	public String getDescriptor() {
 		return this.descriptor;
+	}
+
+	/**
+	 * Gets the type parameters associated with this {@link MethodInfo}
+	 * instance.
+	 *
+	 * @return The type parameters associated with this {@link MethodInfo}
+	 *         instance
+	 */
+	public TypeDescriptor[] getParams() {
+		return this.params;
+	}
+
+	/**
+	 * Gets the return type associated with this {@link MethodInfo} instance.
+	 *
+	 * @return The return type associated with this {@link MethodInfo} instance
+	 */
+	public TypeDescriptor getReturnType() {
+		return this.returnType;
 	}
 
 	/**
