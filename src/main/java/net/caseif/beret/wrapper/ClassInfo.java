@@ -247,9 +247,7 @@ public class ClassInfo {
 		--poolSize; // indices start at 1 for whatever reason
 		constantPool = new ConstantStructure[poolSize];
 		int offset = 10;
-		System.out.println(poolSize);
 		for (int i = 0; i < poolSize; i++) {
-			System.out.println(i);
 			byte tag = bytes[offset]; // get the tag of the current structure
 			++offset; // move the offset to the content start
 			ConstantStructure struct = null;
