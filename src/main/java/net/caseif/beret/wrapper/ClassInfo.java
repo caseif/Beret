@@ -110,12 +110,33 @@ public class ClassInfo {
 	}
 
 	/**
+	 * Gets the package of this class.
+	 *
+	 * @return The name of the package containing this class
+	 */
+	public String getPackage() {
+		if (getName().contains("/")) {
+			return getName().substring(0, getName().lastIndexOf("/")).replace("/", ".");
+		}
+		return "";
+	}
+
+	/**
 	 * Gets the qualified name of this class.
 	 *
 	 * @return The qualified name of this class
 	 */
 	public String getName() {
 		return className;
+	}
+
+	/**
+	 * Gets the unqualified name of this class.
+	 *
+	 * @return The unqualified name of this class
+	 */
+	public String getBaseName() {
+		return getName().substring(getPackage().length() > 0 ? getPackage().length() + 1 : 0);
 	}
 
 	/**
@@ -226,26 +247,24 @@ public class ClassInfo {
 		--poolSize; // indices start at 1 for whatever reason
 		constantPool = new ConstantStructure[poolSize];
 		int offset = 10;
+		System.out.println(poolSize);
 		for (int i = 0; i < poolSize; i++) {
+			System.out.println(i);
 			byte tag = bytes[offset]; // get the tag of the current structure
 			++offset; // move the offset to the content start
 			ConstantStructure struct = null;
-			if (ConstantStructure.StructureType.fromTag(tag) == ConstantStructure.StructureType.UTF_8) {
-				int length = Util.bytesToUshort(bytes[offset], bytes[offset + 1]); // get defined length
-				offset += 2; // move offset past length indicator
-				try {
+			try {
+				if (ConstantStructure.StructureType.fromTag(tag) == ConstantStructure.StructureType.UTF_8) {
+					int length = Util.bytesToUshort(bytes[offset], bytes[offset + 1]); // get defined length
+					offset += 2; // move offset past length indicator
 					struct = new ConstantStructure(tag, length);
-				} catch (IllegalArgumentException ex) {
-					System.err.println("Exception caught at offset " + offset + ":");
-					ex.printStackTrace();
-				}
-			} else {
-				try {
+				} else {
 					struct = new ConstantStructure(tag);
-				} catch (IllegalArgumentException ex) {
-					System.err.println("Exception caught at offset " + offset + ":");
-					ex.printStackTrace();
 				}
+			} catch (IllegalArgumentException ex) {
+				System.err.println("Exception caught at offset 0x" + Integer.toHexString(offset - 1).toUpperCase()
+						+ ":");
+				ex.printStackTrace();
 			}
 			if (struct == null) {
 				throw new UnsupportedOperationException("Failed to load constant pool");

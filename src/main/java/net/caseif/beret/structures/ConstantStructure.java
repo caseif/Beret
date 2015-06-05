@@ -184,6 +184,7 @@ public class ConstantStructure {
 
 		/**
 		 * Gets the {@link StructureType} associated with the given byte tag.
+		 *
 		 * @param tag The tag to get a {@link StructureType} for
 		 * @return The {@link StructureType} associated with the given byte tag
 		 */

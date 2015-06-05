@@ -1295,13 +1295,13 @@ public enum Opcode {
 	 */
 	NOP(0x00, 0),
 	/**
-	 * Disgards the top value of the stack.
+	 * Discards the top value of the stack.
 	 *
 	 * <p>Stack: <code>value -&gt; ()</code></p>
 	 */
 	POP(0x57, 0),
 	/**
-	 * Disgards the top two values of the stack (or one, if it is of type
+	 * Discards the top two values of the stack (or one, if it is of type
 	 * <code>double</code> or <code>long</code>.
 	 *
 	 * <p>Stack: <code>value1, value2 -&gt; ()</code></p>
