@@ -30,6 +30,7 @@ package net.caseif.beret;
 
 import net.caseif.beret.structures.AttributeStructure;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
@@ -99,6 +100,16 @@ public class Util {
 			throw new IllegalArgumentException("Bad byte array length");
 		}
 		return bytesToUshort(bytes[0], bytes[1]);
+	}
+
+	public static long bytesToLong(byte[] bytes) {
+		if (bytes.length != 8) {
+			throw new IllegalArgumentException("Bad byte array length");
+		}
+		ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES); // yey nio
+		buffer.put(bytes);
+		buffer.flip();
+		return buffer.getLong();
 	}
 
 	public static String bytesToHex(byte[] bytes) {

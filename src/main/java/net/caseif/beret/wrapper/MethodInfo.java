@@ -29,10 +29,10 @@
 package net.caseif.beret.wrapper;
 
 import net.caseif.beret.TypeDescriptor;
-import net.caseif.beret.wrapper.synthetic.AccessFlag;
 import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
 import net.caseif.beret.structures.CodeStructure;
+import net.caseif.beret.wrapper.synthetic.AccessFlag;
 
 import java.util.ArrayList;
 
@@ -67,12 +67,10 @@ public class MethodInfo {
 		access = new AccessFlag(AccessFlag.AccessTarget.METHOD, info[0], info[1]);
 
 		// get the name from the provided pointer
-		int namePointer = Util.bytesToUshort(info[2], info[3]);
-		name = parent.getStringFromPool(namePointer);
+		name = parent.getFromPool(info[2], info[3]).toString();
 
 		// get the descriptor from the provided pointer
-		int descPointer = Util.bytesToUshort(info[4], info[5]);
-		descriptor = parent.getStringFromPool(descPointer);
+		descriptor = parent.getFromPool(info[4], info[5]).toString();
 		returnType = new TypeDescriptor(descriptor.substring(descriptor.lastIndexOf(')') + 1));
 		int start = 1;
 		ArrayList<TypeDescriptor> paramList = new ArrayList<>();
@@ -99,12 +97,10 @@ public class MethodInfo {
 		attributes = new AttributeStructure[attrSize];
 		int offset = 8;
 		for (int i = 0; i < attrSize; i++) {
-			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			String name = parent.getStringFromPool(namePointer);
+			String name = parent.getFromPool(info[offset], info[offset + 1]).toString();
 			offset += 2;
 			//TODO: add support for long arrays
-			long infoLength = Util.bytesToUint(info[offset], info[offset + 1],
-					info[offset + 2], info[offset + 3]);
+			long infoLength = Util.bytesToUint(info[offset], info[offset + 1], info[offset + 2], info[offset + 3]);
 			if (infoLength > Integer.MAX_VALUE) {
 				throw new UnsupportedOperationException("Attribute is too long");
 			}

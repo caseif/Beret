@@ -26,7 +26,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.caseif.beret.structures;
+package net.caseif.beret.structures.constant;
+
+import net.caseif.beret.wrapper.ClassInfo;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,25 +40,9 @@ import java.util.Map;
  */
 public class ConstantStructure {
 
-	private boolean isInfoSet = false;
-
+	private final ClassInfo parent;
 	private final StructureType type;
-	private byte[] info;
-
-	/**
-	 * Creates a new {@link ConstantStructure} with a type inferred from the
-	 * given byte tag and the given length.
-	 *
-	 * @param tag The byte tag denoting this structure's type
-	 * @param length The length of this {@link ConstantStructure}
-	 */
-	public ConstantStructure(byte tag, int length) {
-		this.type = StructureType.fromTag(tag);
-		info = new byte[length];
-		if (this.type == null) {
-			throw new IllegalArgumentException("Bad tag: " + tag);
-		}
-	}
+	private final byte[] content;
 
 	/**
 	 * Creates a new {@link ConstantStructure} with a type and length inferred
@@ -67,14 +53,22 @@ public class ConstantStructure {
 	 *                                  literal (in this case a specific length
 	 *                                  must be supplied)
 	 */
-	public ConstantStructure(byte tag) throws IllegalArgumentException {
+	public ConstantStructure(ClassInfo parent, byte tag, byte[] content) throws IllegalArgumentException {
+		this.parent = parent;
 		this.type = StructureType.fromTag(tag);
 		if (this.type == null) {
 			throw new IllegalArgumentException("Bad tag: " + tag);
 		}
-		if (this.type == StructureType.UTF_8) {
-			throw new IllegalArgumentException("Length must be supplied for UTF-8 literal");
-		}
+		this.content = content;
+	}
+
+	/**
+	 * Gets the parent {@link ClassInfo} of this {@link ConstantStructure}.
+	 *
+	 * @return The parent {@link ClassInfo} of this {@link ConstantStructure}
+	 */
+	public ClassInfo getParent() {
+		return this.parent;
 	}
 
 	/**
@@ -82,25 +76,8 @@ public class ConstantStructure {
 	 *
 	 * @return The content of this {@link ConstantStructure}.
 	 */
-	public byte[] getInfo() {
-		return this.info;
-	}
-
-	/**
-	 * Sets the content of this {@link ConstantStructure}.
-	 *
-	 * <p>Note: This method may be called only once.</p>
-	 *
-	 * @param info The content to provide this {@link ConstantStructure}
-	 */
-	public void setInfo(byte[] info) {
-		assert !isInfoSet;
-		if (info.length == getLength()) {
-			this.info = info;
-			isInfoSet = true;
-		} else {
-			throw new IllegalArgumentException("Invalid info length");
-		}
+	public byte[] getContent() {
+		return this.content;
 	}
 
 	/**
@@ -118,7 +95,46 @@ public class ConstantStructure {
 	 * @return The length in bytes of this {@link ConstantStructure}'s content
 	 */
 	public int getLength() {
-		return type.getLength() > -1 ? type.getLength() : info.length;
+		return type.getLength() > -1 ? type.getLength() : content.length;
+	}
+
+	public static ConstantStructure createConstantStructure(ClassInfo parent, byte tag, byte[] content) {
+		StructureType type = StructureType.fromTag(tag);
+		if (type == null) {
+			throw new IllegalArgumentException("Invalid structure type tag");
+		}
+		switch (type) {
+			case UTF_8:
+				return new Utf8Structure(parent, content);
+			case INTEGER:
+				return new IntegerStructure(parent, content);
+			case FLOAT:
+				return new FloatStructure(parent, content);
+			case LONG:
+				return new LongStructure(parent, content);
+			case DOUBLE:
+				return new DoubleStructure(parent, content);
+			case CLASS:
+				return new ClassStructure(parent, content);
+			case STRING:
+				return new StringStructure(parent, content);
+			case FIELD_REF:
+				return new FieldrefStructure(parent, content);
+			case METHOD_REF:
+				return new MethodrefStructure(parent, content);
+			case INTERFACE_METHOD_REF:
+				return new InterfaceMethodrefStructure(parent, content);
+			case NAME_AND_TYPE:
+				return new NameAndTypeStructure(parent, content);
+			case METHOD_HANDLE:
+				return new MethodHandleStructure(parent, content);
+			case METHOD_TYPE:
+				return new MethodTypeStructure(parent, content);
+			case INVOKE_DYNAMIC:
+				return new InvokeDynamicStructure(parent, content);
+			default:
+				return new ConstantStructure(parent, tag, content);
+		}
 	}
 
 	/**
@@ -135,7 +151,7 @@ public class ConstantStructure {
 		STRING(0x08, 2),
 		FIELD_REF(0x09, 4),
 		METHOD_REF(0x0A, 4),
-		INTERFACE_REF(0x0B, 4),
+		INTERFACE_METHOD_REF(0x0B, 4),
 		NAME_AND_TYPE(0x0C, 4),
 		METHOD_HANDLE(0x0F, 3),
 		METHOD_TYPE(0x10, 2),

@@ -31,12 +31,13 @@ package net.caseif.beret.wrapper;
 import static net.caseif.beret.Util.setTabSize;
 import static net.caseif.beret.Util.tab;
 
-import net.caseif.beret.wrapper.synthetic.AccessFlag;
-import net.caseif.beret.wrapper.synthetic.Instruction;
 import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
 import net.caseif.beret.structures.CodeStructure;
-import net.caseif.beret.structures.ConstantStructure;
+import net.caseif.beret.structures.constant.ClassStructure;
+import net.caseif.beret.structures.constant.ConstantStructure;
+import net.caseif.beret.wrapper.synthetic.AccessFlag;
+import net.caseif.beret.wrapper.synthetic.Instruction;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -250,27 +251,15 @@ public class ClassInfo {
 		for (int i = 0; i < poolSize; i++) {
 			byte tag = bytes[offset]; // get the tag of the current structure
 			++offset; // move the offset to the content start
-			ConstantStructure struct = null;
-			try {
-				if (ConstantStructure.StructureType.fromTag(tag) == ConstantStructure.StructureType.UTF_8) {
-					int length = Util.bytesToUshort(bytes[offset], bytes[offset + 1]); // get defined length
-					offset += 2; // move offset past length indicator
-					struct = new ConstantStructure(tag, length);
-				} else {
-					struct = new ConstantStructure(tag);
-				}
-			} catch (IllegalArgumentException ex) {
-				System.err.println("Exception caught at structure at offset 0x"
-						+ Integer.toHexString(offset - 1).toUpperCase() + ":");
-				ex.printStackTrace();
+			ConstantStructure.StructureType structType = ConstantStructure.StructureType.fromTag(tag);
+			int length = structType.getLength();
+			if (structType == ConstantStructure.StructureType.UTF_8) {
+				length = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
+				offset += 2;
 			}
-			if (struct == null) {
-				throw new UnsupportedOperationException("Failed to load constant pool");
-			}
-			int length = struct.getLength(); // get expected length
 			byte[] content = new byte[length]; // create empty array of expected size
 			System.arraycopy(bytes, offset, content, 0, length);
-			struct.setInfo(content); // set the info of the current structure
+			ConstantStructure struct = ConstantStructure.createConstantStructure(this, tag, content);
 			offset += length; // move the offset to the next structure
 			constantPool[i] = struct; // globally store the loaded structure
 			if (struct.getType() == ConstantStructure.StructureType.DOUBLE
@@ -295,18 +284,16 @@ public class ClassInfo {
 	 */
 	public void loadClassInfo() {
 		int offset = CONSTANT_POOL_START + constantPoolLength + 2;
-		int classInfoPointer = Util.bytesToUshort(bytes[offset], bytes[offset + 1]);
-		ConstantStructure classInfo = constantPool[classInfoPointer - 1];
+		ConstantStructure classInfo = getFromPool(bytes[offset], bytes[offset + 1]);
 		if (classInfo.getType() != ConstantStructure.StructureType.CLASS) {
 			throw new IllegalStateException("Class info pointer does not point to a class info structure: found "
 					+ classInfo.getType());
 		}
-		int classNamePointer = Util.bytesToUshort(classInfo.getInfo()[0], classInfo.getInfo()[1]);
-		ConstantStructure classNameStruct = constantPool[classNamePointer - 1];
+		ConstantStructure classNameStruct = getFromPool(classInfo.getContent()[0], classInfo.getContent()[1]);
 		if (classNameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 			throw new IllegalStateException("Class name pointer does not point to a UTF-8 structure");
 		}
-		className = Util.asUtf8(classNameStruct.getInfo());
+		className = Util.asUtf8(classNameStruct.getContent());
 
 		int superInfoPointer = Util.bytesToUshort(bytes[offset + 2], bytes[offset + 3]);
 		if (superInfoPointer > 0) {
@@ -314,12 +301,11 @@ public class ClassInfo {
 			if (superInfo.getType() != ConstantStructure.StructureType.CLASS) {
 				throw new IllegalStateException("Superclass info pointer does not point to a class info structure");
 			}
-			int superNamePointer = Util.bytesToUshort(superInfo.getInfo()[0], superInfo.getInfo()[1]);
-			ConstantStructure superNameStruct = constantPool[superNamePointer - 1];
+			ConstantStructure superNameStruct = getFromPool(superInfo.getContent()[0], superInfo.getContent()[1]);
 			if (superNameStruct.getType() != ConstantStructure.StructureType.UTF_8) {
 				throw new IllegalStateException("Superclass name pointer does not point to a UTF-8 structure");
 			}
-			superName = Util.asUtf8(superNameStruct.getInfo());
+			superName = Util.asUtf8(superNameStruct.getContent());
 		} else { // super pointer is 0x00, so it defaults to Object
 			superName = "java/lang/Object";
 		}
@@ -338,12 +324,7 @@ public class ClassInfo {
 				if (classStruct.getType() != ConstantStructure.StructureType.CLASS) {
 					throw new IllegalStateException("Interface pointer does not point to a class structure");
 				}
-				int utf8Pointer = Util.bytesToUshort(classStruct.getInfo()[0], classStruct.getInfo()[1]);
-				ConstantStructure interfaceName = constantPool[utf8Pointer - 1];
-				if (interfaceName.getType() != ConstantStructure.StructureType.UTF_8) {
-					throw new IllegalStateException("Class structure does not point to a UTF-8 structure");
-				}
-				interfacePool[i] = Util.asUtf8(interfaceName.getInfo());
+				interfacePool[i] = Util.asUtf8(((ClassStructure)classStruct).getName().getContent());
 			} else {
 				interfacePool[i] = "";
 			}
@@ -364,7 +345,7 @@ public class ClassInfo {
 			offset += 8; // field access, name, descriptor, and attribute count
 			for (AttributeStructure attr : fields[i].getAttributes()) {
 				offset += 6; // attribute name and length
-				offset += attr.getInfo().length;
+				offset += attr.getContent().length;
 			}
 		}
 		METHOD_POOL_START = offset;
@@ -382,7 +363,7 @@ public class ClassInfo {
 			offset += 8; // field access, name, descriptor, and attribute count
 			for (AttributeStructure attr : methods[i].getAttributes()) {
 				offset += 6; // attribute name and length
-				offset += attr.getInfo().length;
+				offset += attr.getContent().length;
 			}
 		}
 		ATTRIBUTE_POOL_START = offset;
@@ -394,8 +375,7 @@ public class ClassInfo {
 		offset += 2;
 		attributes = new AttributeStructure[attrSize];
 		for (int i = 0; i < attrSize; i++) {
-			int namePointer = Util.bytesToUshort(getBytes()[offset], getBytes()[offset + 1]);
-			String name = getStringFromPool(namePointer);
+			String name = getFromPool(getBytes()[offset], getBytes()[offset + 1]).toString();
 			offset += 2;
 			//TODO: add support for long arrays
 			long infoLength = Util.bytesToUint(getBytes()[offset], getBytes()[offset + 1],
@@ -435,10 +415,10 @@ public class ClassInfo {
 				sb.append(i + 1).append(": ");
 				sb.append(cs.getType().toString()).append(" - ");
 				if (cs.getType() == ConstantStructure.StructureType.UTF_8) {
-					sb.append(Util.asUtf8(cs.getInfo()).replaceAll("\\n", "\\\\n"));
+					sb.append(Util.asUtf8(cs.getContent()).replaceAll("\\n", "\\\\n"));
 				}
 				else {
-					sb.append(Util.bytesToHex(cs.getInfo()));
+					sb.append(Util.bytesToHex(cs.getContent()));
 				}
 				sb.append("\n");
 			}
@@ -446,7 +426,7 @@ public class ClassInfo {
 		}
 
 		sb.append("\n");
-		sb.append("Access flags: ");
+		sb.append("Flags: ");
 		assert accessFlag.getTargetType() == AccessFlag.AccessTarget.CLASS;
 		for (AccessFlag.ClassFlag ft : (Set<AccessFlag.ClassFlag>)accessFlag.getFlags()) {
 			sb.append(ft.toString()).append(" ");
@@ -464,7 +444,7 @@ public class ClassInfo {
 		for (FieldInfo f : fields) {
 			setTabSize(2);
 			sb.append(tab(1)).append(f.getName()).append(":").append("\n");
-			sb.append(tab(2)).append("Access flags: ");
+			sb.append(tab(2)).append("Flags: ");
 			assert f.getAccess().getTargetType() == AccessFlag.AccessTarget.FIELD;
 			for (AccessFlag.FieldFlag flag : (Set<AccessFlag.FieldFlag>)f.getAccess().getFlags()) {
 				sb.append(flag.toString()).append(" ");
@@ -474,7 +454,7 @@ public class ClassInfo {
 			sb.append(tab(2)).append("Attributes:").append("\n");
 			for (AttributeStructure attr : f.getAttributes()) {
 				sb.append(tab(3)).append(attr.getName()).append(": ")
-						.append(Util.bytesToHex(attr.getInfo())).append("\n");
+						.append(Util.bytesToHex(attr.getContent())).append("\n");
 			}
 		}
 
@@ -482,7 +462,7 @@ public class ClassInfo {
 		sb.append("Methods:").append("\n");
 		for (MethodInfo f : methods) {
 			sb.append(tab(1)).append(f.getName()).append(":").append("\n");
-			sb.append(tab(2)).append("Access flags: ");
+			sb.append(tab(2)).append("Flags: ");
 			assert f.getAccess().getTargetType() == AccessFlag.AccessTarget.METHOD;
 			for (AccessFlag.MethodFlag flag : (Set<AccessFlag.MethodFlag>)f.getAccess().getFlags()) {
 				sb.append(flag.toString()).append(" ");
@@ -508,14 +488,14 @@ public class ClassInfo {
 								.append(Util.bytesToHex(instr.getExtraBytes())).append("\n");
 					}
 				} else {
-					sb.append(" ").append(Util.bytesToHex(attr.getInfo())).append("\n");
+					sb.append(" ").append(Util.bytesToHex(attr.getContent())).append("\n");
 				}
 			}
 		}
 
 		sb.append("Attributes:").append("\n");
 		for (AttributeStructure attr : attributes) {
-			sb.append(tab(1)).append(attr.getName()).append(": ").append(Util.bytesToHex(attr.getInfo()));
+			sb.append(tab(1)).append(attr.getName()).append(": ").append(Util.bytesToHex(attr.getContent()));
 		}
 
 		sb.append("\n"); // for good measure
@@ -528,25 +508,9 @@ public class ClassInfo {
 		return getConstantPool()[offset - 1];
 	}
 
-	public ConstantStructure getFromPool(byte[] offset) {
+	public ConstantStructure getFromPool(byte... offset) {
 		if (offset.length == 2) {
 			return getFromPool(Util.bytesToUshort(offset));
-		} else {
-			throw new IllegalArgumentException("Bad offset length");
-		}
-	}
-
-	public String getStringFromPool(int offset) {
-		ConstantStructure cs = getFromPool(offset);
-		if (cs.getType() != ConstantStructure.StructureType.UTF_8) {
-			throw new IllegalArgumentException("Constant structure is not of type UTF-8");
-		}
-		return Util.asUtf8(cs.getInfo());
-	}
-
-	public String getStringFromPool(byte[] offset) {
-		if (offset.length == 2) {
-			return getStringFromPool(Util.bytesToUshort(offset));
 		} else {
 			throw new IllegalArgumentException("Bad offset length");
 		}

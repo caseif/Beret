@@ -29,10 +29,10 @@
 package net.caseif.beret.wrapper;
 
 import net.caseif.beret.TypeDescriptor;
-import net.caseif.beret.wrapper.synthetic.AccessFlag;
 import net.caseif.beret.Util;
 import net.caseif.beret.structures.AttributeStructure;
-import net.caseif.beret.structures.ConstantStructure;
+import net.caseif.beret.structures.constant.ConstantStructure;
+import net.caseif.beret.wrapper.synthetic.AccessFlag;
 
 /**
  * Contains information regarding a specific field.
@@ -62,12 +62,10 @@ public class FieldInfo {
 		access = new AccessFlag(AccessFlag.AccessTarget.FIELD, info[0], info[1]);
 
 		// get the name from the provided pointer
-		int namePointer = Util.bytesToUshort(info[2], info[3]);
-		name = parent.getStringFromPool(namePointer);
+		name = parent.getFromPool(info[2], info[3]).toString();
 
 		// get the descriptor from the provided pointer
-		int descPointer = Util.bytesToUshort(info[4], info[5]);
-		descriptor = new TypeDescriptor(parent.getStringFromPool(descPointer));
+		descriptor = new TypeDescriptor(parent.getFromPool(info[4], info[5]).toString());
 
 		loadAttributes(parent, info);
 	}
@@ -77,8 +75,7 @@ public class FieldInfo {
 		attributes = new AttributeStructure[attrSize];
 		int offset = 8;
 		for (int i = 0; i < attrSize; i++) {
-			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			String name = parent.getStringFromPool(namePointer);
+			String name = parent.getFromPool(info[offset], info[offset + 1]).toString();
 			offset += 2;
 			int infoLength = Util.bytesToInt(info[offset], info[offset + 1],
 					info[offset + 2], info[offset + 3]);

@@ -39,7 +39,7 @@ public class AttributeStructure {
 
 	private ClassInfo parent;
 	private String name;
-	private byte[] info;
+	private byte[] content;
 
 	/**
 	 * Loads an {@link AttributeStructure}.
@@ -48,10 +48,10 @@ public class AttributeStructure {
 	 * @param name The name of this {@link AttributeStructure}
 	 * @param info The raw content of this {@link AttributeStructure}
 	 */
-	public AttributeStructure(ClassInfo parent, String name, byte[] info) {
+	public AttributeStructure(ClassInfo parent, String name, byte[] content) {
 		this.parent = parent;
 		this.name = name;
-		this.info = info;
+		this.content = content;
 	}
 
 	/**
@@ -76,8 +76,8 @@ public class AttributeStructure {
 	 *
 	 * @return The raw data of this {@link AttributeStructure}
 	 */
-	public byte[] getInfo() {
-		return this.info;
+	public byte[] getContent() {
+		return this.content;
 	}
 
 }

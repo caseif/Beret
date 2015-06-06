@@ -28,20 +28,14 @@
  */
 package net.caseif.beret.structures;
 
-import net.caseif.beret.wrapper.ClassInfo;
-import net.caseif.beret.wrapper.synthetic.ExceptionHandler;
-import net.caseif.beret.wrapper.synthetic.Instruction;
-import net.caseif.beret.wrapper.MethodInfo;
 import net.caseif.beret.Opcode;
 import net.caseif.beret.Util;
+import net.caseif.beret.wrapper.ClassInfo;
+import net.caseif.beret.wrapper.MethodInfo;
+import net.caseif.beret.wrapper.synthetic.ExceptionHandler;
+import net.caseif.beret.wrapper.synthetic.Instruction;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 /**
  * Represents a Code attribute in a method.
@@ -107,8 +101,8 @@ public class CodeStructure extends AttributeStructure {
 			int endIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
 			int handlerStartIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
 			int catchType = Util.bytesToUshort(info[offset], info[offset + 1]);
-			byte[] classRef = getParent().getFromPool(catchType).getInfo();
-			String catchTypeName = getParent().getStringFromPool(classRef);
+			byte[] classRef = getParent().getFromPool(catchType).getContent();
+			String catchTypeName = getParent().getFromPool(classRef).toString();
 			exceptionHandlers[i] = new ExceptionHandler(
 					method, startIndex, endIndex, handlerStartIndex, catchTypeName
 			);
@@ -119,7 +113,7 @@ public class CodeStructure extends AttributeStructure {
 		attributes = new AttributeStructure[attributeCount];
 		for (int i = 0; i < attributeCount; i++) {
 			int namePointer = Util.bytesToUshort(info[offset], info[offset + 1]);
-			String attrName = getParent().getStringFromPool(namePointer);
+			String attrName = getParent().getFromPool(namePointer).toString();
 			offset += 2;
 			//TODO: add support for long arrays
 			long infoLength = Util.bytesToUint(info[offset], info[offset + 1],

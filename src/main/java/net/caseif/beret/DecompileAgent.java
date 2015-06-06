@@ -117,7 +117,7 @@ public class DecompileAgent {
                 + handle.getMajorVersion() + "." + handle.getMinorVersion() + ")");
         boolean knownSource = false;
         if (source != null) {
-            String fileName = handle.getStringFromPool(Util.bytesToUshort(source.getInfo()));
+            String fileName = handle.getFromPool(source.getContent()).toString();
             if (!fileName.equals("SourceFile")) {
                 knownSource = true;
                 sb.insert(0, "// compiled from source file \"" + fileName + "\"");

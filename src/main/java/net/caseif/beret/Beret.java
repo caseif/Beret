@@ -40,7 +40,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Beret Extraordinary Reverse Engineering Toolkit.
+ * <strong>B</strong>eret
+ * <strong>E</strong>xtraordinary
+ * <strong>R</strong>everse <strong>E</strong>ngineering
+ * <strong>T</strong>oolkit.
  *
  * @author Max Roncacé
  * @version 1.0.0-SNAPSHOT
@@ -84,8 +87,7 @@ public class Beret {
 				DecompileAgent da = new DecompileAgent(cf);
 				os.write(da.decompile().getBytes(Charset.forName("UTF-8")));
 			}
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.err.println("Failed to write to output stream!");
 			System.exit(1);
