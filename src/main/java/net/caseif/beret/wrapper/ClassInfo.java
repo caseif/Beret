@@ -260,8 +260,8 @@ public class ClassInfo {
 					struct = new ConstantStructure(tag);
 				}
 			} catch (IllegalArgumentException ex) {
-				System.err.println("Exception caught at offset 0x" + Integer.toHexString(offset - 1).toUpperCase()
-						+ ":");
+				System.err.println("Exception caught at structure at offset 0x"
+						+ Integer.toHexString(offset - 1).toUpperCase() + ":");
 				ex.printStackTrace();
 			}
 			if (struct == null) {
@@ -273,6 +273,10 @@ public class ClassInfo {
 			struct.setInfo(content); // set the info of the current structure
 			offset += length; // move the offset to the next structure
 			constantPool[i] = struct; // globally store the loaded structure
+			if (struct.getType() == ConstantStructure.StructureType.DOUBLE
+					|| struct.getType() == ConstantStructure.StructureType.LONG) {
+				++i; // doubles and longs take up two slots in the constant table
+			}
 		}
 		constantPoolLength = offset - 10;
 	}
@@ -426,15 +430,18 @@ public class ClassInfo {
 		sb.append("Constant pool dump:").append("\n");
 		int i = 0;
 		for (ConstantStructure cs : constantPool) {
-			sb.append(tab(1));
-			sb.append(i + 1).append(": ");
-			sb.append(cs.getType().toString()).append(" - ");
-			if (cs.getType() == ConstantStructure.StructureType.UTF_8) {
-				sb.append(Util.asUtf8(cs.getInfo()).replaceAll("\\n", "\\\\n"));
-			} else {
-				sb.append(Util.bytesToHex(cs.getInfo()));
+			if (cs != null) {
+				sb.append(tab(1));
+				sb.append(i + 1).append(": ");
+				sb.append(cs.getType().toString()).append(" - ");
+				if (cs.getType() == ConstantStructure.StructureType.UTF_8) {
+					sb.append(Util.asUtf8(cs.getInfo()).replaceAll("\\n", "\\\\n"));
+				}
+				else {
+					sb.append(Util.bytesToHex(cs.getInfo()));
+				}
+				sb.append("\n");
 			}
-			sb.append("\n");
 			++i;
 		}
 
