@@ -62,8 +62,7 @@ public class DecompileAgent {
     }
 
     /**
-     * Prints a representation of this {@link DecompileAgent}'s class in Java
-     * code.
+     * Prints a representation of this {@link DecompileAgent}'s class in Java code.
      *
      * @return A String containing the decompiled code
      */

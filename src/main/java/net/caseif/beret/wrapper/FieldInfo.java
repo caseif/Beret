@@ -41,97 +41,95 @@ import net.caseif.beret.wrapper.synthetic.AccessFlag;
  */
 public class FieldInfo {
 
-	private ClassInfo parent;
-	private AccessFlag access;
-	private String name;
-	private TypeDescriptor descriptor;
-	private AttributeStructure[] attributes;
+    private ClassInfo parent;
+    private AccessFlag access;
+    private String name;
+    private TypeDescriptor descriptor;
+    private AttributeStructure[] attributes;
 
-	/**
-	 * Loads information about a field from the given {@link ConstantStructure}.
-	 * @param parent The parent {@link ClassInfo} instance
-	 * @param info The byte array non-exclusively containing this field's info,
-	 *             with index 0 containing the first byte
-	 * @throws IllegalArgumentException If <code>structure</code> contains
-	 *                                  invalid data
-	 */
-	public FieldInfo(ClassInfo parent, byte[] info) throws IllegalArgumentException {
-		this.parent = parent;
+    /**
+     * Loads information about a field from the given {@link ConstantStructure}.
+     *
+     * @param parent The parent {@link ClassInfo} instance
+     * @param info   The byte array non-exclusively containing this field's info, with index 0 containing the first
+     *               byte
+     * @throws IllegalArgumentException If <code>structure</code> contains invalid data
+     */
+    public FieldInfo(ClassInfo parent, byte[] info) throws IllegalArgumentException {
+        this.parent = parent;
 
-		// get the access flag
-		access = new AccessFlag(AccessFlag.AccessTarget.FIELD, info[0], info[1]);
+        // get the access flag
+        access = new AccessFlag(AccessFlag.AccessTarget.FIELD, info[0], info[1]);
 
-		// get the name from the provided pointer
-		name = parent.getFromPool(info[2], info[3]).toString();
+        // get the name from the provided pointer
+        name = parent.getFromPool(info[2], info[3]).toString();
 
-		// get the descriptor from the provided pointer
-		descriptor = new TypeDescriptor(parent.getFromPool(info[4], info[5]).toString());
+        // get the descriptor from the provided pointer
+        descriptor = new TypeDescriptor(parent.getFromPool(info[4], info[5]).toString());
 
-		loadAttributes(parent, info);
-	}
+        loadAttributes(parent, info);
+    }
 
-	private void loadAttributes(ClassInfo parent, byte[] info) {
-		int attrSize = Util.bytesToUshort(info[6], info[7]);
-		attributes = new AttributeStructure[attrSize];
-		int offset = 8;
-		for (int i = 0; i < attrSize; i++) {
-			String name = parent.getFromPool(info[offset], info[offset + 1]).toString();
-			offset += 2;
-			int infoLength = Util.bytesToInt(info[offset], info[offset + 1],
-					info[offset + 2], info[offset + 3]);
-			offset += 4;
-			byte[] finalInfo = new byte[infoLength];
-			System.arraycopy(info, offset, finalInfo, 0, infoLength);
-			offset += infoLength;
-			attributes[i] = new AttributeStructure(getParent(), name, finalInfo);
-		}
-	}
+    private void loadAttributes(ClassInfo parent, byte[] info) {
+        int attrSize = Util.bytesToUshort(info[6], info[7]);
+        attributes = new AttributeStructure[attrSize];
+        int offset = 8;
+        for (int i = 0; i < attrSize; i++) {
+            String name = parent.getFromPool(info[offset], info[offset + 1]).toString();
+            offset += 2;
+            int infoLength = Util.bytesToInt(info[offset], info[offset + 1],
+                    info[offset + 2], info[offset + 3]);
+            offset += 4;
+            byte[] finalInfo = new byte[infoLength];
+            System.arraycopy(info, offset, finalInfo, 0, infoLength);
+            offset += infoLength;
+            attributes[i] = new AttributeStructure(getParent(), name, finalInfo);
+        }
+    }
 
-	/**
-	 * Gets the parent {@link ClassInfo} instance.
-	 *
-	 * @return The parent {@link ClassInfo} instance
-	 */
-	public ClassInfo getParent() {
-		return this.parent;
-	}
+    /**
+     * Gets the parent {@link ClassInfo} instance.
+     *
+     * @return The parent {@link ClassInfo} instance
+     */
+    public ClassInfo getParent() {
+        return this.parent;
+    }
 
-	/**
-	 * Gets the access modifiers of this field.
-	 *
-	 * @return The access modifiers of this field
-	 */
-	public AccessFlag getAccess() {
-		return this.access;
-	}
+    /**
+     * Gets the access modifiers of this field.
+     *
+     * @return The access modifiers of this field
+     */
+    public AccessFlag getAccess() {
+        return this.access;
+    }
 
-	/**
-	 * Gets the name associated with this {@link FieldInfo} instance.
-	 *
-	 * @return The name associated with this {@link FieldInfo} instance
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Gets the name associated with this {@link FieldInfo} instance.
+     *
+     * @return The name associated with this {@link FieldInfo} instance
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * Gets the descriptor associated with this {@link FieldInfo} instance.
-	 *
-	 * @return The descriptor associated with this {@link FieldInfo} instance
-	 */
-	public TypeDescriptor getDescriptor() {
-		return this.descriptor;
-	}
+    /**
+     * Gets the descriptor associated with this {@link FieldInfo} instance.
+     *
+     * @return The descriptor associated with this {@link FieldInfo} instance
+     */
+    public TypeDescriptor getDescriptor() {
+        return this.descriptor;
+    }
 
-	/**
-	 * Gets the {@link AttributeStructure}s associated with this
-	 * {@link FieldInfo} instance.
-	 *
-	 * @return The {@link AttributeStructure}s associated with this
-	 * {@link FieldInfo} instance.
-	 */
-	public AttributeStructure[] getAttributes() {
-		return this.attributes;
-	}
+    /**
+     * Gets the {@link AttributeStructure}s associated with this {@link FieldInfo} instance.
+     *
+     * @return The {@link AttributeStructure}s associated with this {@link FieldInfo} instance.
+     */
+    public AttributeStructure[] getAttributes() {
+        return this.attributes;
+    }
 
 }

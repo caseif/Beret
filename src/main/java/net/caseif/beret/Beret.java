@@ -40,9 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <strong>B</strong>eret
- * <strong>E</strong>xtraordinary
- * <strong>R</strong>everse <strong>E</strong>ngineering
+ * <strong>B</strong>eret <strong>E</strong>xtraordinary <strong>R</strong>everse <strong>E</strong>ngineering
  * <strong>T</strong>oolkit.
  *
  * @author Max Roncacé
@@ -50,55 +48,55 @@ import java.util.List;
  */
 public class Beret {
 
-	public static void main(String[] args) {
-		if (args.length < 3) {
-			printUsage();
-			System.exit(0);
-		}
-		String action = args[0];
-		List<String> valid = Arrays.asList("dump", "decompile");
-		if (!valid.contains(action.toLowerCase())) {
-			System.err.println("Invalid command!");
-			printUsage();
-			System.exit(1);
-		}
-		File input = new File(args[1]);
-		if (!input.exists()) {
-			System.err.println("Input file does not exist!");
-			System.exit(1);
-		}
-		System.out.println("Reading from " + input.getAbsolutePath() + "...");
-		ClassInfo cf = null;
-		try {
-			cf = new ClassInfo(new FileInputStream(input));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			System.err.println("Invalid input file!");
-			System.exit(1);
-		}
-		File output = new File(args[2]);
-		try (OutputStream os = new FileOutputStream(output)) {
-			if (args.length > 2) {
-				System.out.println("Writing to " + output.getAbsolutePath() + "...");
-			}
-			if (action.equalsIgnoreCase("dump")) {
-				cf.dump(os);
-			} else if (action.equalsIgnoreCase("decompile")) {
-				DecompileAgent da = new DecompileAgent(cf);
-				os.write(da.decompile().getBytes(Charset.forName("UTF-8")));
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			System.err.println("Failed to write to output stream!");
-			System.exit(1);
-		}
-	}
+    public static void main(String[] args) {
+        if (args.length < 3) {
+            printUsage();
+            System.exit(0);
+        }
+        String action = args[0];
+        List<String> valid = Arrays.asList("dump", "decompile");
+        if (!valid.contains(action.toLowerCase())) {
+            System.err.println("Invalid command!");
+            printUsage();
+            System.exit(1);
+        }
+        File input = new File(args[1]);
+        if (!input.exists()) {
+            System.err.println("Input file does not exist!");
+            System.exit(1);
+        }
+        System.out.println("Reading from " + input.getAbsolutePath() + "...");
+        ClassInfo cf = null;
+        try {
+            cf = new ClassInfo(new FileInputStream(input));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.err.println("Invalid input file!");
+            System.exit(1);
+        }
+        File output = new File(args[2]);
+        try (OutputStream os = new FileOutputStream(output)) {
+            if (args.length > 2) {
+                System.out.println("Writing to " + output.getAbsolutePath() + "...");
+            }
+            if (action.equalsIgnoreCase("dump")) {
+                cf.dump(os);
+            } else if (action.equalsIgnoreCase("decompile")) {
+                DecompileAgent da = new DecompileAgent(cf);
+                os.write(da.decompile().getBytes(Charset.forName("UTF-8")));
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            System.err.println("Failed to write to output stream!");
+            System.exit(1);
+        }
+    }
 
-	public static void printUsage() {
-		System.out.println("Usage: Beret.jar <command> <class file> <output file>");
-		System.out.println("Available commands:");
-		System.out.println("    dump - Dumps info about a class in an arbitrary format");
-		System.out.println("    decompile - Decompiles a class into its original source code");
-	}
+    public static void printUsage() {
+        System.out.println("Usage: Beret.jar <command> <class file> <output file>");
+        System.out.println("Available commands:");
+        System.out.println("    dump - Dumps info about a class in an arbitrary format");
+        System.out.println("    decompile - Decompiles a class into its original source code");
+    }
 
 }

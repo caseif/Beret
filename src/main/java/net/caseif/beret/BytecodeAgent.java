@@ -41,8 +41,7 @@ import java.util.ArrayList;
 public class BytecodeAgent {
 
     /**
-     * Decompiles the bytecode of the given method, with each array element
-     * representing a line of code.
+     * Decompiles the bytecode of the given method, with each array element representing a line of code.
      *
      * @param method The method to decompile
      * @return The decompiled bytecode

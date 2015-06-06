@@ -37,47 +37,48 @@ import net.caseif.beret.wrapper.ClassInfo;
  */
 public class AttributeStructure {
 
-	private ClassInfo parent;
-	private String name;
-	private byte[] content;
+    private ClassInfo parent;
+    private String name;
+    private byte[] content;
 
-	/**
-	 * Loads an {@link AttributeStructure}.
-	 *
-	 * @param parent The parent {@link ClassInfo} instance
-	 * @param name The name of this {@link AttributeStructure}
-	 * @param info The raw content of this {@link AttributeStructure}
-	 */
-	public AttributeStructure(ClassInfo parent, String name, byte[] content) {
-		this.parent = parent;
-		this.name = name;
-		this.content = content;
-	}
+    /**
+     * Loads an {@link AttributeStructure}.
+     *
+     * @param parent  The parent {@link ClassInfo} instance
+     * @param name    The name of this {@link AttributeStructure}
+     * @param content The raw content of this {@link AttributeStructure}
+     */
+    public AttributeStructure(ClassInfo parent, String name, byte[] content) {
+        this.parent = parent;
+        this.name = name;
+        this.content = content;
+    }
 
-	/**
-	 * Returns the parent {@link ClassInfo} instance.
-	 * @return The parent {@link ClassInfo} instance
-	 */
-	public ClassInfo getParent() {
-		return this.parent;
-	}
+    /**
+     * Returns the parent {@link ClassInfo} instance.
+     *
+     * @return The parent {@link ClassInfo} instance
+     */
+    public ClassInfo getParent() {
+        return this.parent;
+    }
 
-	/**
-	 * Gets the name of this {@link AttributeStructure}.
-	 *
-	 * @return The name of this {@link AttributeStructure}
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Gets the name of this {@link AttributeStructure}.
+     *
+     * @return The name of this {@link AttributeStructure}
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * Gets the raw data of this {@link AttributeStructure}.
-	 *
-	 * @return The raw data of this {@link AttributeStructure}
-	 */
-	public byte[] getContent() {
-		return this.content;
-	}
+    /**
+     * Gets the raw data of this {@link AttributeStructure}.
+     *
+     * @return The raw data of this {@link AttributeStructure}
+     */
+    public byte[] getContent() {
+        return this.content;
+    }
 
 }

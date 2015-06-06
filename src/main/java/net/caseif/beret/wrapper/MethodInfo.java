@@ -43,144 +43,139 @@ import java.util.ArrayList;
  */
 public class MethodInfo {
 
-	private ClassInfo parent;
-	private AccessFlag access;
-	private String name;
-	private String descriptor;
-	private TypeDescriptor[] params;
-	private TypeDescriptor returnType;
-	private AttributeStructure[] attributes;
+    private ClassInfo parent;
+    private AccessFlag access;
+    private String name;
+    private String descriptor;
+    private TypeDescriptor[] params;
+    private TypeDescriptor returnType;
+    private AttributeStructure[] attributes;
 
-	/**
-	 * Loads information about a method from the given byte array.
-	 *
-	 * @param parent The parent {@link ClassInfo} instance
-	 * @param info The byte array non-exclusively containing this method's info,
-	 *             with index 0 containing the first byte
-	 * @throws IllegalArgumentException If <code>structure</code> contains
-	 *                                  invalid data
-	 */
-	public MethodInfo(ClassInfo parent, byte[] info) throws IllegalArgumentException {
-		this.parent = parent;
+    /**
+     * Loads information about a method from the given byte array.
+     *
+     * @param parent The parent {@link ClassInfo} instance
+     * @param info   The byte array non-exclusively containing this method's info, with index 0 containing the first
+     *               byte
+     * @throws IllegalArgumentException If <code>structure</code> contains invalid data
+     */
+    public MethodInfo(ClassInfo parent, byte[] info) throws IllegalArgumentException {
+        this.parent = parent;
 
-		// get the access flag
-		access = new AccessFlag(AccessFlag.AccessTarget.METHOD, info[0], info[1]);
+        // get the access flag
+        access = new AccessFlag(AccessFlag.AccessTarget.METHOD, info[0], info[1]);
 
-		// get the name from the provided pointer
-		name = parent.getFromPool(info[2], info[3]).toString();
+        // get the name from the provided pointer
+        name = parent.getFromPool(info[2], info[3]).toString();
 
-		// get the descriptor from the provided pointer
-		descriptor = parent.getFromPool(info[4], info[5]).toString();
-		returnType = new TypeDescriptor(descriptor.substring(descriptor.lastIndexOf(')') + 1));
-		int start = 1;
-		ArrayList<TypeDescriptor> paramList = new ArrayList<>();
-		for (int i = start; i < descriptor.lastIndexOf(')'); i++) {
-			while (descriptor.charAt(i) == '[') {
-				++i; // increment until we're past the bit that defines array dimensions
-			}
-			if (descriptor.charAt(i) == 'L') {
-				while (descriptor.charAt(i) != ';') {
-					++i; // increment until we're past the class name
-				}
-			}
-			paramList.add(new TypeDescriptor(descriptor.substring(start, i + 1)));
-			start = i + 1;
-		}
-		params = new TypeDescriptor[paramList.size()];
-		paramList.toArray(params);
+        // get the descriptor from the provided pointer
+        descriptor = parent.getFromPool(info[4], info[5]).toString();
+        returnType = new TypeDescriptor(descriptor.substring(descriptor.lastIndexOf(')') + 1));
+        int start = 1;
+        ArrayList<TypeDescriptor> paramList = new ArrayList<>();
+        for (int i = start; i < descriptor.lastIndexOf(')'); i++) {
+            while (descriptor.charAt(i) == '[') {
+                ++i; // increment until we're past the bit that defines array dimensions
+            }
+            if (descriptor.charAt(i) == 'L') {
+                while (descriptor.charAt(i) != ';') {
+                    ++i; // increment until we're past the class name
+                }
+            }
+            paramList.add(new TypeDescriptor(descriptor.substring(start, i + 1)));
+            start = i + 1;
+        }
+        params = new TypeDescriptor[paramList.size()];
+        paramList.toArray(params);
 
-		loadAttributes(info);
-	}
+        loadAttributes(info);
+    }
 
-	private void loadAttributes(byte[] info) {
-		int attrSize = Util.bytesToUshort(info[6], info[7]);
-		attributes = new AttributeStructure[attrSize];
-		int offset = 8;
-		for (int i = 0; i < attrSize; i++) {
-			String name = parent.getFromPool(info[offset], info[offset + 1]).toString();
-			offset += 2;
-			//TODO: add support for long arrays
-			long infoLength = Util.bytesToUint(info[offset], info[offset + 1], info[offset + 2], info[offset + 3]);
-			if (infoLength > Integer.MAX_VALUE) {
-				throw new UnsupportedOperationException("Attribute is too long");
-			}
-			offset += 4;
-			byte[] finalInfo = new byte[(int)infoLength];
-			System.arraycopy(info, offset, finalInfo, 0, (int)infoLength);
-			offset += infoLength;
-			if (name.equalsIgnoreCase("Code")) {
-				attributes[i] = new CodeStructure(this, name, finalInfo);
-			} else {
-				attributes[i] = new AttributeStructure(this.getParent(), name, finalInfo);
-			}
-		}
-	}
+    private void loadAttributes(byte[] info) {
+        int attrSize = Util.bytesToUshort(info[6], info[7]);
+        attributes = new AttributeStructure[attrSize];
+        int offset = 8;
+        for (int i = 0; i < attrSize; i++) {
+            String name = parent.getFromPool(info[offset], info[offset + 1]).toString();
+            offset += 2;
+            //TODO: add support for long arrays
+            long infoLength = Util.bytesToUint(info[offset], info[offset + 1], info[offset + 2], info[offset + 3]);
+            if (infoLength > Integer.MAX_VALUE) {
+                throw new UnsupportedOperationException("Attribute is too long");
+            }
+            offset += 4;
+            byte[] finalInfo = new byte[(int)infoLength];
+            System.arraycopy(info, offset, finalInfo, 0, (int)infoLength);
+            offset += infoLength;
+            if (name.equalsIgnoreCase("Code")) {
+                attributes[i] = new CodeStructure(this, name, finalInfo);
+            } else {
+                attributes[i] = new AttributeStructure(this.getParent(), name, finalInfo);
+            }
+        }
+    }
 
-	/**
-	 * Gets the parent {@link ClassInfo} instance.
-	 *
-	 * @return The parent {@link ClassInfo} instance
-	 */
-	public ClassInfo getParent() {
-		return this.parent;
-	}
+    /**
+     * Gets the parent {@link ClassInfo} instance.
+     *
+     * @return The parent {@link ClassInfo} instance
+     */
+    public ClassInfo getParent() {
+        return this.parent;
+    }
 
-	/**
-	 * Gets the access modifiers of this method.
-	 *
-	 * @return The access modifiers of this method
-	 */
-	public AccessFlag getAccess() {
-		return this.access;
-	}
+    /**
+     * Gets the access modifiers of this method.
+     *
+     * @return The access modifiers of this method
+     */
+    public AccessFlag getAccess() {
+        return this.access;
+    }
 
-	/**
-	 * Gets the name associated with this {@link MethodInfo} instance.
-	 *
-	 * @return The name associated with this {@link MethodInfo} instance
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Gets the name associated with this {@link MethodInfo} instance.
+     *
+     * @return The name associated with this {@link MethodInfo} instance
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * Gets the descriptor associated with this {@link MethodInfo} instance.
-	 *
-	 * @return The descriptor associated with this {@link MethodInfo} instance
-	 */
-	public String getDescriptor() {
-		return this.descriptor;
-	}
+    /**
+     * Gets the descriptor associated with this {@link MethodInfo} instance.
+     *
+     * @return The descriptor associated with this {@link MethodInfo} instance
+     */
+    public String getDescriptor() {
+        return this.descriptor;
+    }
 
-	/**
-	 * Gets the type parameters associated with this {@link MethodInfo}
-	 * instance.
-	 *
-	 * @return The type parameters associated with this {@link MethodInfo}
-	 *         instance
-	 */
-	public TypeDescriptor[] getParams() {
-		return this.params;
-	}
+    /**
+     * Gets the type parameters associated with this {@link MethodInfo} instance.
+     *
+     * @return The type parameters associated with this {@link MethodInfo} instance
+     */
+    public TypeDescriptor[] getParams() {
+        return this.params;
+    }
 
-	/**
-	 * Gets the return type associated with this {@link MethodInfo} instance.
-	 *
-	 * @return The return type associated with this {@link MethodInfo} instance
-	 */
-	public TypeDescriptor getReturnType() {
-		return this.returnType;
-	}
+    /**
+     * Gets the return type associated with this {@link MethodInfo} instance.
+     *
+     * @return The return type associated with this {@link MethodInfo} instance
+     */
+    public TypeDescriptor getReturnType() {
+        return this.returnType;
+    }
 
-	/**
-	 * Gets the {@link AttributeStructure}s associated with this
-	 * {@link MethodInfo} instance.
-	 *
-	 * @return The {@link AttributeStructure}s associated with this
-	 * {@link MethodInfo} instance.
-	 */
-	public AttributeStructure[] getAttributes() {
-		return this.attributes;
-	}
+    /**
+     * Gets the {@link AttributeStructure}s associated with this {@link MethodInfo} instance.
+     *
+     * @return The {@link AttributeStructure}s associated with this {@link MethodInfo} instance.
+     */
+    public AttributeStructure[] getAttributes() {
+        return this.attributes;
+    }
 
 }

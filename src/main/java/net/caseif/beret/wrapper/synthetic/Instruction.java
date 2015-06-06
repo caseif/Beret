@@ -37,27 +37,27 @@ import net.caseif.beret.Opcode;
  */
 public class Instruction {
 
-	private Opcode opcode;
-	private int byteOffset;
-	private byte[] extra;
+    private Opcode opcode;
+    private int byteOffset;
+    private byte[] extra;
 
-	public Instruction(Opcode opcode, int byteOffset, byte... extraBytes) {
-		assert opcode.getAdditionalBytes() == extraBytes.length;
-		this.opcode = opcode;
-		this.byteOffset = byteOffset;
-		this.extra = extraBytes;
-	}
+    public Instruction(Opcode opcode, int byteOffset, byte... extraBytes) {
+        assert opcode.getAdditionalBytes() == extraBytes.length;
+        this.opcode = opcode;
+        this.byteOffset = byteOffset;
+        this.extra = extraBytes;
+    }
 
-	public Opcode getOpcode() {
-		return this.opcode;
-	}
+    public Opcode getOpcode() {
+        return this.opcode;
+    }
 
-	public int getByteOffset() {
-		return this.byteOffset;
-	}
+    public int getByteOffset() {
+        return this.byteOffset;
+    }
 
-	public byte[] getExtraBytes() {
-		return this.extra;
-	}
+    public byte[] getExtraBytes() {
+        return this.extra;
+    }
 
 }

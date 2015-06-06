@@ -45,20 +45,20 @@ import java.util.Arrays;
 
 public class AccessFlagTest {
 
-	@Test
-	public void testFlags() {
-		testFlag((byte)0x02, (byte)0x10, ACC_INTERFACE, ACC_FINAL);
-		testFlag((byte)0x12, (byte)0x10, ACC_SYNTHETIC, ACC_INTERFACE, ACC_FINAL);
-		testFlag((byte)0x12, (byte)0x11, ACC_SYNTHETIC, ACC_INTERFACE, ACC_FINAL, ACC_PUBLIC);
-		testFlag((byte)0x12, (byte)0x21, ACC_SYNTHETIC, ACC_INTERFACE, ACC_SUPER, ACC_PUBLIC);
-		testFlag((byte)0x24, (byte)0x10, ACC_ANNOTATION, ACC_ABSTRACT, ACC_FINAL);
-		testFlag((byte)0x44, (byte)0x10, ACC_ENUM, ACC_ABSTRACT, ACC_FINAL);
-	}
+    @Test
+    public void testFlags() {
+        testFlag((byte)0x02, (byte)0x10, ACC_INTERFACE, ACC_FINAL);
+        testFlag((byte)0x12, (byte)0x10, ACC_SYNTHETIC, ACC_INTERFACE, ACC_FINAL);
+        testFlag((byte)0x12, (byte)0x11, ACC_SYNTHETIC, ACC_INTERFACE, ACC_FINAL, ACC_PUBLIC);
+        testFlag((byte)0x12, (byte)0x21, ACC_SYNTHETIC, ACC_INTERFACE, ACC_SUPER, ACC_PUBLIC);
+        testFlag((byte)0x24, (byte)0x10, ACC_ANNOTATION, ACC_ABSTRACT, ACC_FINAL);
+        testFlag((byte)0x44, (byte)0x10, ACC_ENUM, ACC_ABSTRACT, ACC_FINAL);
+    }
 
-	private void testFlag(byte first, byte second, AccessFlag.ClassFlag... expected) {
-		AccessFlag flag = new AccessFlag(AccessFlag.AccessTarget.CLASS, first, second);
-		assert flag.getFlags().containsAll(Arrays.asList(expected)); // check it has all the flags we expect
-		assert Arrays.asList(expected).containsAll(flag.getFlags()); // check it doesn't have any unexpected flags
-	}
+    private void testFlag(byte first, byte second, AccessFlag.ClassFlag... expected) {
+        AccessFlag flag = new AccessFlag(AccessFlag.AccessTarget.CLASS, first, second);
+        assert flag.getFlags().containsAll(Arrays.asList(expected)); // check it has all the flags we expect
+        assert Arrays.asList(expected).containsAll(flag.getFlags()); // check it doesn't have any unexpected flags
+    }
 
 }

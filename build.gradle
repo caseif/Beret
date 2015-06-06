@@ -29,7 +29,6 @@ configurations {
     deployerJars
 }
 
-
 // Project repositories
 repositories {
     mavenCentral()
@@ -75,8 +74,8 @@ license {
 // check code style
 checkstyle {
     configProperties = [
-            'name'		: project.name,
-            'year'		: project.inceptionYear
+            'name': project.name,
+            'year': project.inceptionYear
     ]
     configFile = file('etc/checkstyle.xml')
 }
@@ -102,7 +101,7 @@ uploadArchives {
     repositories.mavenDeployer {
         setUniqueVersion(true)
         configuration = configurations.deployerJars
-        if (project.hasProperty('mavenRepo')) {
+        if (project.hasProperty('mavenRepo')){
             repository(url: project.property('mavenRepo')) {
                 authentication(userName: project.property('mavenUser'), password: project.property('mavenPass'))
             }

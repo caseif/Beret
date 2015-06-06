@@ -38,182 +38,182 @@ import java.util.Set;
  */
 public final class AccessFlag {
 
-	private final AccessTarget target;
-	private final Set<Enum> flags;
+    private final AccessTarget target;
+    private final Set<Enum> flags;
 
-	/**
-	 * Constructs a new access flag from the given bitmask.
-	 *
-	 * @param target The item type this flag applies to
-	 * @param first The first byte of the bitmask
-	 * @param second The second byte of the bitmask
-	 */
-	public AccessFlag(AccessTarget target, byte first, byte second) {
-		this.target = target;
-		flags = new HashSet<>();
-		if (target == AccessTarget.CLASS) {
-			for (ClassFlag ft : ClassFlag.values()) {
-				if (ft.isFirst && (first & ft.mask) == ft.mask
-						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
-					flags.add(ft);
-				}
-			}
-		} else if (target == AccessTarget.FIELD) {
-			for (FieldFlag ft : FieldFlag.values()) {
-				if (ft.isFirst && (first & ft.mask) == ft.mask
-						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
-					flags.add(ft);
-				}
-			}
-		} else if (target == AccessTarget.METHOD) {
-			for (MethodFlag ft : MethodFlag.values()) {
-				if (ft.isFirst && (first & ft.mask) == ft.mask
-						|| !ft.isFirst && (second & ft.mask) == ft.mask) {
-					flags.add(ft);
-				}
-			}
-		}
-		//TODO: verify the flag combination is valid
-	}
+    /**
+     * Constructs a new access flag from the given bitmask.
+     *
+     * @param target The item type this flag applies to
+     * @param first  The first byte of the bitmask
+     * @param second The second byte of the bitmask
+     */
+    public AccessFlag(AccessTarget target, byte first, byte second) {
+        this.target = target;
+        flags = new HashSet<>();
+        if (target == AccessTarget.CLASS) {
+            for (ClassFlag ft : ClassFlag.values()) {
+                if (ft.isFirst && (first & ft.mask) == ft.mask
+                        || !ft.isFirst && (second & ft.mask) == ft.mask) {
+                    flags.add(ft);
+                }
+            }
+        } else if (target == AccessTarget.FIELD) {
+            for (FieldFlag ft : FieldFlag.values()) {
+                if (ft.isFirst && (first & ft.mask) == ft.mask
+                        || !ft.isFirst && (second & ft.mask) == ft.mask) {
+                    flags.add(ft);
+                }
+            }
+        } else if (target == AccessTarget.METHOD) {
+            for (MethodFlag ft : MethodFlag.values()) {
+                if (ft.isFirst && (first & ft.mask) == ft.mask
+                        || !ft.isFirst && (second & ft.mask) == ft.mask) {
+                    flags.add(ft);
+                }
+            }
+        }
+        //TODO: verify the flag combination is valid
+    }
 
-	/**
-	 * Gets the structure type which these flags apply to.
-	 *
-	 * @return The structure type which these flags apply to
-	 */
-	public AccessTarget getTargetType() {
-		return this.target;
-	}
+    /**
+     * Gets the structure type which these flags apply to.
+     *
+     * @return The structure type which these flags apply to
+     */
+    public AccessTarget getTargetType() {
+        return this.target;
+    }
 
-	/**
-	 * Gets all access flags set by this {@link AccessFlag}.
-	 *
-	 * @return All access flags set by this {@link AccessFlag}
-	 */
-	public Set<? extends Enum> getFlags() {
-		return this.flags;
-	}
+    /**
+     * Gets all access flags set by this {@link AccessFlag}.
+     *
+     * @return All access flags set by this {@link AccessFlag}
+     */
+    public Set<? extends Enum> getFlags() {
+        return this.flags;
+    }
 
-	/**
-	 * Represents a construct which may have access flags applied to it.
-	 */
-	public enum AccessTarget {
-		CLASS,
-		FIELD,
-		METHOD
-	}
+    /**
+     * Represents a construct which may have access flags applied to it.
+     */
+    public enum AccessTarget {
+        CLASS,
+        FIELD,
+        METHOD
+    }
 
-	/**
-	 * Represents a flag applying to a class.
-	 */
-	public enum ClassFlag {
+    /**
+     * Represents a flag applying to a class.
+     */
+    public enum ClassFlag {
 
-		//TODO: document
-		ACC_PUBLIC((byte)0x01, false, true),
-		ACC_ABSTRACT((byte)0x04, true, true),
-		ACC_FINAL((byte)0x10, false, true),
-		ACC_INTERFACE((byte)0x02, true, true),
-		ACC_ENUM((byte)0x40, true, true),
-		ACC_SUPER((byte)0x20, false, false),
-		ACC_SYNTHETIC((byte)0x10, true, false),
-		ACC_ANNOTATION((byte)0x20, true, false);
+        //TODO: document
+        ACC_PUBLIC((byte)0x01, false, true),
+        ACC_ABSTRACT((byte)0x04, true, true),
+        ACC_FINAL((byte)0x10, false, true),
+        ACC_INTERFACE((byte)0x02, true, true),
+        ACC_ENUM((byte)0x40, true, true),
+        ACC_SUPER((byte)0x20, false, false),
+        ACC_SYNTHETIC((byte)0x10, true, false),
+        ACC_ANNOTATION((byte)0x20, true, false);
 
-		private byte mask;
-		private boolean isFirst;
-		private boolean inSource;
+        private byte mask;
+        private boolean isFirst;
+        private boolean inSource;
 
-		ClassFlag(byte mask, boolean isFirst, boolean inSource) {
-			this.mask = mask;
-			this.isFirst = isFirst;
-			this.inSource = inSource;
-		}
+        ClassFlag(byte mask, boolean isFirst, boolean inSource) {
+            this.mask = mask;
+            this.isFirst = isFirst;
+            this.inSource = inSource;
+        }
 
-		public boolean isPresentInSource() {
-			return inSource;
-		}
+        public boolean isPresentInSource() {
+            return inSource;
+        }
 
-		@Override
-		public String toString() {
-			return this.name().substring(4).toLowerCase();
-		}
+        @Override
+        public String toString() {
+            return this.name().substring(4).toLowerCase();
+        }
 
-	}
+    }
 
-	/**
-	 * Represents a flag applying to a field.
-	 */
-	public enum FieldFlag {
+    /**
+     * Represents a flag applying to a field.
+     */
+    public enum FieldFlag {
 
-		//TODO: document
-		ACC_PUBLIC((byte)0x01, false, true),
-		ACC_PRIVATE((byte)0x02, false, true),
-		ACC_PROTECTED((byte)0x04, false, true),
-		ACC_STATIC((byte)0x08, false, true),
-		ACC_VOLATILE((byte)0x40, false, true),
-		ACC_TRANSIENT((byte)0x80, false, true),
-		ACC_FINAL((byte)0x10, false, true),
-		ACC_ENUM((byte)0x40, true, false),
-		ACC_SYNTHETIC((byte)0x10, true, false);
+        //TODO: document
+        ACC_PUBLIC((byte)0x01, false, true),
+        ACC_PRIVATE((byte)0x02, false, true),
+        ACC_PROTECTED((byte)0x04, false, true),
+        ACC_STATIC((byte)0x08, false, true),
+        ACC_VOLATILE((byte)0x40, false, true),
+        ACC_TRANSIENT((byte)0x80, false, true),
+        ACC_FINAL((byte)0x10, false, true),
+        ACC_ENUM((byte)0x40, true, false),
+        ACC_SYNTHETIC((byte)0x10, true, false);
 
-		private byte mask;
-		private boolean isFirst;
-		private boolean inSource;
+        private byte mask;
+        private boolean isFirst;
+        private boolean inSource;
 
-		FieldFlag(byte mask, boolean isFirst, boolean inSource) {
-			this.mask = mask;
-			this.isFirst = isFirst;
-			this.inSource = inSource;
-		}
+        FieldFlag(byte mask, boolean isFirst, boolean inSource) {
+            this.mask = mask;
+            this.isFirst = isFirst;
+            this.inSource = inSource;
+        }
 
-		public boolean isPresentInSource() {
-			return inSource;
-		}
+        public boolean isPresentInSource() {
+            return inSource;
+        }
 
-		@Override
-		public String toString() {
-			return this.name().substring(4).toLowerCase();
-		}
+        @Override
+        public String toString() {
+            return this.name().substring(4).toLowerCase();
+        }
 
-	}
+    }
 
-	/**
-	 * Represents a flag applying to a method.
-	 */
-	public enum MethodFlag {
+    /**
+     * Represents a flag applying to a method.
+     */
+    public enum MethodFlag {
 
-		//TODO: document
-		ACC_PUBLIC((byte)0x01, false, true),
-		ACC_PRIVATE((byte)0x02, false, true),
-		ACC_PROTECTED((byte)0x04, false, true),
-		ACC_STATIC((byte)0x08, false, true),
-		ACC_ABSTRACT((byte)0x04, true, true),
-		ACC_SYNCHRONIZED((byte)0x20, false, true),
-		ACC_FINAL((byte)0x10, false, true),
-		ACC_STRICT((byte)0x08, true, true),
-		ACC_NATIVE((byte)0x01, true, true),
-		ACC_BRIDGE((byte)0x40, false, false),
-		ACC_VARARGS((byte)0x80, false, false),
-		ACC_SYNTHETIC((byte)0x10, true, false);
+        //TODO: document
+        ACC_PUBLIC((byte)0x01, false, true),
+        ACC_PRIVATE((byte)0x02, false, true),
+        ACC_PROTECTED((byte)0x04, false, true),
+        ACC_STATIC((byte)0x08, false, true),
+        ACC_ABSTRACT((byte)0x04, true, true),
+        ACC_SYNCHRONIZED((byte)0x20, false, true),
+        ACC_FINAL((byte)0x10, false, true),
+        ACC_STRICT((byte)0x08, true, true),
+        ACC_NATIVE((byte)0x01, true, true),
+        ACC_BRIDGE((byte)0x40, false, false),
+        ACC_VARARGS((byte)0x80, false, false),
+        ACC_SYNTHETIC((byte)0x10, true, false);
 
-		private byte mask;
-		private boolean isFirst;
-		private boolean inSource;
+        private byte mask;
+        private boolean isFirst;
+        private boolean inSource;
 
-		MethodFlag(byte mask, boolean isFirst, boolean inSource) {
-			this.mask = mask;
-			this.isFirst = isFirst;
-			this.inSource = inSource;
-		}
+        MethodFlag(byte mask, boolean isFirst, boolean inSource) {
+            this.mask = mask;
+            this.isFirst = isFirst;
+            this.inSource = inSource;
+        }
 
-		public boolean isPresentInSource() {
-			return inSource;
-		}
+        public boolean isPresentInSource() {
+            return inSource;
+        }
 
-		@Override
-		public String toString() {
-			return this.name().substring(4).toLowerCase();
-		}
+        @Override
+        public String toString() {
+            return this.name().substring(4).toLowerCase();
+        }
 
-	}
+    }
 
 }
