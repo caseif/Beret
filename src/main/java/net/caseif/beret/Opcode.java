@@ -616,7 +616,7 @@ public enum Opcode {
      *
      * <p>Stack: <code>arrayref, index, value -&gt; ()</code></p>
      */
-    IASTORE(0x41, 0),
+    IASTORE(0x4F, 0),
     /**
      * Loads the int constant <code>-1</code> onto the stack.
      *

@@ -44,7 +44,6 @@ public class MethodHandleStructure extends ConstantStructure {
     public MethodHandleStructure(ClassInfo parent, byte[] content) {
         super(parent, StructureType.METHOD_HANDLE.getTag(), content);
         this.kind = ReferenceKind.fromMagicNumber(content[0]);
-        this.ref = parent.getFromPool(content[1], content[2]);
     }
 
     public ReferenceKind getReferenceKind() {
@@ -52,7 +51,7 @@ public class MethodHandleStructure extends ConstantStructure {
     }
 
     public ConstantStructure getReference() {
-        return ref;
+        return getParent().getFromPool(content[2], content[3]);
     }
 
     public enum ReferenceKind {
@@ -69,7 +68,7 @@ public class MethodHandleStructure extends ConstantStructure {
         INVOKE_STATIC(6, StructureType.METHOD_REF),
         INVOKE_SPECIAL(7, StructureType.METHOD_REF);
 
-        private static Map<Byte, ReferenceKind> kinds = new HashMap<Byte, ReferenceKind>();
+        private static Map<Byte, ReferenceKind> kinds;
 
         private byte magic;
         private StructureType type;
@@ -82,6 +81,9 @@ public class MethodHandleStructure extends ConstantStructure {
         }
 
         void putKind() {
+            if (kinds == null) {
+                kinds = new HashMap<>();
+            }
             kinds.put(magic, this);
         }
 

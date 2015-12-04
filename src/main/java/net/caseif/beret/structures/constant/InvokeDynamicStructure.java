@@ -37,12 +37,10 @@ import net.caseif.beret.wrapper.ClassInfo;
 public class InvokeDynamicStructure extends ConstantStructure {
 
     private int bootstrapMethodIndex;
-    private NameAndTypeStructure name;
 
     public InvokeDynamicStructure(ClassInfo parent, byte[] content) {
         super(parent, StructureType.INVOKE_DYNAMIC.getTag(), content);
         this.bootstrapMethodIndex = Util.bytesToUshort(content[0], content[1]);
-        this.name = (NameAndTypeStructure)parent.getFromPool(content[2], content[3]);
     }
 
     public int getBootstrapMethodIndex() {
@@ -50,6 +48,6 @@ public class InvokeDynamicStructure extends ConstantStructure {
     }
 
     public NameAndTypeStructure getNameAndType() {
-        return name;
+        return ((NameAndTypeStructure)getParent().getFromPool(content[2], content[3]));
     }
 }

@@ -97,10 +97,10 @@ public class CodeStructure extends AttributeStructure {
         offset += 2;
         exceptionHandlers = new ExceptionHandler[exceptionTableLength];
         for (int i = 0; i < exceptionTableLength; i++) {
-            int startIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
-            int endIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
-            int handlerStartIndex = Util.bytesToUshort(info[offset], info[offset + 1]);
-            int catchType = Util.bytesToUshort(info[offset], info[offset + 1]);
+            int startIndex = Util.bytesToUshort(info[offset + i], info[offset + 1 + i]);
+            int endIndex = Util.bytesToUshort(info[offset + 2 + i], info[offset + 3 + i]);
+            int handlerStartIndex = Util.bytesToUshort(info[offset + 4 + i], info[offset + 5 + i]);
+            int catchType = Util.bytesToUshort(info[offset + 6 + i], info[offset + 7 + i]);
             byte[] classRef = getParent().getFromPool(catchType).getContent();
             String catchTypeName = getParent().getFromPool(classRef).toString();
             exceptionHandlers[i] = new ExceptionHandler(

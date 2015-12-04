@@ -35,14 +35,11 @@ import net.caseif.beret.wrapper.ClassInfo;
  */
 public class MethodTypeStructure extends ConstantStructure {
 
-    private Utf8Structure descriptor;
-
     public MethodTypeStructure(ClassInfo parent, byte[] content) {
         super(parent, StructureType.METHOD_TYPE.getTag(), content);
-        this.descriptor = (Utf8Structure)parent.getFromPool(content);
     }
 
     public Utf8Structure getDescriptor() {
-        return descriptor;
+        return ((Utf8Structure)getParent().getFromPool(content));
     }
 }

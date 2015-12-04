@@ -40,9 +40,9 @@ import java.util.Map;
  */
 public class ConstantStructure {
 
-    private final ClassInfo parent;
-    private final StructureType type;
-    private final byte[] content;
+    protected final ClassInfo parent;
+    protected final StructureType type;
+    protected final byte[] content;
 
     /**
      * Creates a new {@link ConstantStructure} with a type and length inferred from the given byte tag.

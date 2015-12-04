@@ -35,14 +35,11 @@ import net.caseif.beret.wrapper.ClassInfo;
  */
 public class ClassStructure extends ConstantStructure {
 
-    private Utf8Structure name;
-
     public ClassStructure(ClassInfo parent, byte[] content) {
         super(parent, StructureType.CLASS.getTag(), content);
-        this.name = (Utf8Structure)parent.getFromPool(content);
     }
 
     public Utf8Structure getName() {
-        return name;
+        return ((Utf8Structure)getParent().getFromPool(content));
     }
 }

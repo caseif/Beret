@@ -35,20 +35,15 @@ import net.caseif.beret.wrapper.ClassInfo;
  */
 public class FieldrefStructure extends ConstantStructure {
 
-    private ClassStructure clazz;
-    private NameAndTypeStructure name;
-
     public FieldrefStructure(ClassInfo parent, byte[] content) {
         super(parent, StructureType.FIELD_REF.getTag(), content);
-        this.clazz = (ClassStructure)parent.getFromPool(content[0], content[1]);
-        this.name = (NameAndTypeStructure)parent.getFromPool(content[2], content[3]);
     }
 
     public ClassStructure getClassStructure() {
-        return clazz;
+        return ((ClassStructure)getParent().getFromPool(content[0], content[1]));
     }
 
     public NameAndTypeStructure getNameAndType() {
-        return name;
+        return ((NameAndTypeStructure)getParent().getFromPool(content[2], content[3]));
     }
 }
